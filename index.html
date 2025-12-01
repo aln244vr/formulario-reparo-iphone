@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Reparo por Correio | Yūsō Shūri</title>
+    <!-- Carrega o Tailwind CSS para estilização moderna e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1f2937; /* Cinza escuro */
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db; /* Cinza claro */
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s;
+        }
+        /* Ajuste para o textarea e o botão ficarem lado a lado (em telas grandes) */
+        .flex-textarea-button {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .flex-textarea-button textarea {
+            flex-grow: 1;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6; /* Azul */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <!-- Container Principal do Formulário -->
+    <div class="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                修理依頼フォーム (Formulário de Pedido de Reparo)
+            </h1>
+            <p class="text-gray-600">
+                Preencha os dados e receba as instruções de envio no seu e-mail.
+            </p>
+        </header>
+
+        <!-- 
+            IMPORTANTE: 
+            O e-mail de destino foi atualizado para aln244vr@gmail.com.
+        -->
+        <form id="repairForm" action="https://formsubmit.co/aln244vr@gmail.com" method="POST" enctype="multipart/form-data">
+            
+            <!-- Campo de Captcha Oculto (Recomendado pelo FormSubmit) -->
+            <input type="hidden" name="_captcha" value="false">
+            
+            <!-- NOVO: Redireciona para a página de confirmação após o envio -->
+            <input type="hidden" name="_next" value="confirmacao.html">
+
+            <!-- Configura o FormSubmit para formatar o e-mail como uma tabela -->
+            <input type="hidden" name="_template" value="table">
+            
+            <!-- Define um assunto claro para o e-mail que você receberá -->
+            <input type="hidden" name="_subject" value="NOVO PEDIDO DE REPARO - iPhone por Correio">
+            
+            <!-- --------------------------------------- -->
+            <!-- SEÇÃO 1: DADOS DO CLIENTE (お客様情報) -->
+            <!-- --------------------------------------- -->
+            <h2 class="text-xl font-semibold text-blue-600 mb-4 border-b pb-2">1. お客様情報 (Dados do Cliente)</h2>
+
+            <!-- Nome Completo -->
+            <div class="form-group">
+                <label for="name">お名前 (Nome Completo) <span class="text-red-500">*</span></label>
+                <input type="text" id="name" name="Nome" placeholder="例: Yamada Tarou" required>
+            </div>
+
+            <!-- Telefone - Limitado a 11 dígitos numéricos -->
+            <div class="form-group">
+                <label for="phone">電話番号 (Telefone) <span class="text-red-500">*</span></label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="Telefone" 
+                    placeholder="090XXXXXXXXX (apenas 11 números)" 
+                    maxlength="11" 
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                    required
+                >
+            </div>
+            
+            <!-- E-mail - COM DATALIST SEMPRE ATIVO (COMPORTAMENTO PADRÃO) -->
+            <div class="form-group">
+                <label for="email">メールアドレス (E-mail) <span class="text-red-500">*</span></label>
+                <!-- list="email-suggestions" está permanentemente aqui, ativando as sugestões -->
+                <input type="email" id="email" name="Email" placeholder="seuemail@exemplo.com" list="email-suggestions" required>
+                <!-- Datalist com sugestões de domínios em ordem de popularidade no Japão (2025) -->
+                <datalist id="email-suggestions">
+                    <option value="@gmail.com"></option>
+                    <option value="@yahoo.co.jp"></option>
+                    <option value="@docomo.ne.jp"></option>
+                    <option value="@au.com"></option>
+                    <option value="@softbank.ne.jp"></option>
+                    <option value="@i.softbank.jp"></option>
+                    <option value="@icloud.com"></option>
+                    <option value="@outlook.com"></option>
+                    <option value="@hotmail.com"></option>
+                    <option value="@rakuten.jp"></option>
+                </datalist>
+            </div>
+
+            <!-- Endereço (Opção simplificada para coleta, sem busca automática de CEP) -->
+            <div class="form-group">
+                <label for="address">ご住所 (Endereço Completo para Devolução)</label>
+                <textarea id="address" name="Endereco" rows="3" placeholder="〒XXX-XXXX 愛知県西尾市..."></textarea>
+            </div>
+
+            <!-- --------------------------------------- -->
+            <!-- SEÇÃO 2: DADOS DO REPARO (修理内容) -->
+            <!-- --------------------------------------- -->
+            <h2 class="text-xl font-semibold text-blue-600 mb-4 mt-6 border-b pb-2">2. 修理内容 (Detalhes do Reparo)</h2>
+
+            <!-- Série do iPhone (Primeiro Select) -->
+            <div class="form-group">
+                <label for="series-select">iPhoneのシリーズ (Série do iPhone) <span class="text-red-500">*</span></label>
+                <select id="series-select" onchange="populateModels()" required>
+                    <option value="" disabled selected>選択してください (Selecione)</option>
+                    <!-- As opções da série são preenchidas pelo JS no carregamento -->
+                </select>
+            </div>
+
+            <!-- Modelo Exato do iPhone (Segundo Select - Cascata) -->
+            <div class="form-group">
+                <label for="model-select">正確なモデル (Modelo Exato) <span class="text-red-500">*</span></label>
+                <select id="model-select" name="Modelo do iPhone" disabled required>
+                    <option value="" disabled selected>Primeiro escolha a série (Primeiro escolha a série)</option>
+                </select>
+            </div>
+
+            <!-- Tipo de Serviço -->
+            <div class="form-group">
+                <label for="service">ご希望の修理サービス (Serviço Desejado) <span class="text-red-500">*</span></label>
+                <select id="service" name="Servico Desejado" required>
+                    <option value="" disabled selected>選択してください (Selecione)</option>
+                    <option value="Troca de Tela (Display)">画面交換 (Troca de Tela/Display)</option>
+                    <option value="Troca de Bateria">バッテリー交換 (Troca de Bateria)</option>
+                    <option value="Troca de Vidro Traseiro">背面ガラス交換 (Troca de Vidro Traseiro)</option>
+                    <option value="Diagnóstico/Outro">診断/その他の修理 (Diagnóstico / Outro Reparo)</option>
+                </select>
+            </div>
+            
+            <!-- CAMPO: UPLOAD DE FOTOS -->
+            <div class="form-group">
+                <label for="photos">写真の添付 (Anexar Fotos do Dano)</label>
+                <input type="file" id="photos" name="Fotos do Dano" accept="image/jpeg, image/png" multiple>
+                <p class="text-sm text-gray-500 mt-1">
+                    <span class="font-semibold">最大2枚まで推奨</span> (Recomendamos no máximo 2 fotos). <br> Ajuda a confirmar a cotação inicial.
+                </p>
+            </div>
+
+            <!-- Descrição do Problema - AGORA COM RECURSO GEMINI -->
+            <div class="form-group">
+                <label for="problem">故障内容の詳細 (Detalhes do Problema)</label>
+                <div class="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-2 mb-2">
+                    <textarea id="problem" name="Detalhes do Problema" rows="4" placeholder="Ex: A tela está rachada e o toque não funciona na metade inferior."></textarea>
+                    <button type="button" id="analyze-problem-btn" onclick="formalizeProblemDescription()" class="flex-shrink-0 bg-purple-600 text-white font-semibold py-2 px-3 rounded-xl hover:bg-purple-700 transition duration-300 shadow-md text-sm whitespace-nowrap w-full sm:w-auto mt-1 sm:mt-0">
+                        ✨ Analisar e Detalhar
+                    </button>
+                </div>
+                <!-- Área de Mensagem para Erros ou Feedback -->
+                <div id="problem-message" class="text-sm text-red-500 mt-1 hidden" role="alert"></div>
+            </div>
+
+            <!-- Botão de Envio -->
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md mt-6">
+                修理を依頼する (Solicitar Reparo)
+            </button>
+            
+            <!-- Aviso de Privacidade e Segurança -->
+            <p class="text-center text-xs text-gray-500 mt-4">
+                送信後、すぐに確認メールが届きます。(Após o envio, você receberá um e-mail de confirmação.)
+            </p>
+        </form>
+    </div>
+
+    <script>
+        // Variáveis e utilitários para integração com Gemini API
+        const apiKey = ""; // A chave é fornecida automaticamente pelo ambiente
+        const problemMessageDiv = document.getElementById('problem-message');
+
+        // Função para exibir mensagens na UI (substituindo o alert)
+        function showProblemMessage(message, isError = false) {
+            problemMessageDiv.textContent = message;
+            problemMessageDiv.className = isError 
+                ? 'text-sm text-red-500 mt-1' 
+                : 'text-sm text-green-600 mt-1';
+            problemMessageDiv.style.display = 'block';
+            
+            // Oculta a mensagem após 5 segundos
+            setTimeout(() => {
+                problemMessageDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Utility for exponential backoff (for API resilience)
+        async function exponentialBackoffFetch(url, options, maxRetries = 5) {
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response;
+                    } else if (response.status === 429 && attempt < maxRetries - 1) {
+                        const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                } catch (error) {
+                    if (attempt === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw new Error("Max retries reached.");
+        }
+
+        async function fetchLLMResponse(userQuery, systemPrompt) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || 'Erro ao gerar descrição detalhada.';
+                return text;
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return 'Erro ao conectar com o serviço de IA.';
+            }
+        }
+
+        // Função de IA para formalizar e expandir a descrição do problema
+        async function formalizeProblemDescription() {
+            const problemTextarea = document.getElementById('problem');
+            const analyzeButton = document.getElementById('analyze-problem-btn');
+            const currentText = problemTextarea.value.trim();
+
+            if (!currentText) {
+                showProblemMessage("Por favor, digite uma breve descrição do problema antes de analisar.", true);
+                return;
+            }
+
+            analyzeButton.disabled = true;
+            analyzeButton.textContent = '✨ Analisando...';
+            problemMessageDiv.style.display = 'none';
+
+            // System prompt para direcionar o modelo
+            const systemPrompt = `Você é um especialista em recepção de reparos de iPhone. Sua tarefa é receber a descrição bruta do cliente e expandi-la em um relatório formal e detalhado para o técnico. Seu relatório deve ser claro, conciso, e estruturado com títulos usando Markdown. O relatório deve conter:
+            
+            1. **Descrição Formal do Dano**
+            2. **Sintomas Atuais** (funcionalidade de toque, display, som, etc.)
+            3. **Causa Aparente** (Queda, Água, Desgaste, etc.)
+            
+            Responda apenas com o texto do relatório formatado em Markdown, sem introduções, saudações ou explicações.`;
+
+            const generatedText = await fetchLLMResponse(currentText, systemPrompt);
+
+            // Substitui o conteúdo do textarea pelo texto gerado
+            if (!generatedText.startsWith('Erro')) {
+                problemTextarea.value = generatedText;
+                showProblemMessage("Análise de IA concluída! Revise o relatório antes de enviar.", false);
+            } else {
+                showProblemMessage(generatedText, true); 
+            }
+            
+            analyzeButton.disabled = false;
+            analyzeButton.textContent = '✨ Analisar e Detalhar';
+        }
+        
+        // Dados dos modelos de iPhone em cascata (Lógica original)
+        const iphoneModels = {
+            'iPhone 17 / 17 Air / 17 Pro / 17 Pro Max (2025)': ['iPhone 17', 'iPhone 17 Air', 'iPhone 17 Pro', 'iPhone 17 Pro Max'],
+            'iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max': ['iPhone 16', 'iPhone 16 Plus', 'iPhone 16 Pro', 'iPhone 16 Pro Max'],
+            'iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max': ['iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max'],
+            'iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max': ['iPhone 14', 'iPhone 14 Plus', 'iPhone 14 Pro', 'iPhone 14 Pro Max'],
+            'iPhone 13 / 13 mini / 13 Pro / 13 Pro Max': ['iPhone 13', 'iPhone 13 mini', 'iPhone 13 Pro', 'iPhone 13 Pro Max'],
+            'iPhone 12 / 12 mini / 12 Pro / 12 Pro Max': ['iPhone 12', 'iPhone 12 mini', 'iPhone 12 Pro', 'iPhone 12 Pro Max'],
+            'iPhone 11 / 11 Pro / 11 Pro Max': ['iPhone 11', 'iPhone 11 Pro', 'iPhone 11 Pro Max'],
+            'iPhone SE (Todas as Gerações)': ['iPhone SE (1ª Geração)', 'iPhone SE (2ª Geração)', 'iPhone SE (3ª Geração)'],
+            'iPhone X e Modelos Antigos': ['iPhone X', 'iPhone 8 / 8 Plus', 'iPhone 7 / 7 Plus', 'iPhone 6s / 6s Plus e Antigos']
+        };
+
+        // Função para preencher a caixa de seleção de modelos com base na série
+        function populateModels() {
+            const seriesSelect = document.getElementById('series-select');
+            const modelSelect = document.getElementById('model-select');
+            const selectedSeries = seriesSelect.value;
+
+            // Limpa as opções existentes do segundo select
+            modelSelect.innerHTML = '<option value="" disabled selected>選択してください (Selecione)</option>';
+            modelSelect.disabled = true;
+
+            if (selectedSeries && iphoneModels[selectedSeries]) {
+                const models = iphoneModels[selectedSeries];
+                
+                // Adiciona a mensagem "Primeiro escolha a série" como a primeira opção (desabilitada)
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "選択してください (Selecione)";
+                modelSelect.appendChild(defaultOption);
+
+                // Preenche com os modelos da série selecionada
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    modelSelect.appendChild(option);
+                });
+
+                modelSelect.disabled = false;
+            } else {
+                // Se nada for selecionado, restaura a mensagem inicial
+                const initialOption = document.createElement('option');
+                initialOption.value = "";
+                initialOption.textContent = "Primeiro escolha a série (Primeiro escolha a série)";
+                initialOption.selected = true;
+                initialOption.disabled = true;
+                modelSelect.appendChild(initialOption);
+            }
+        }
+        
+        // Função para preencher a caixa de seleção de Séries
+        function populateSeries() {
+            const seriesSelect = document.getElementById('series-select');
+
+            // Adiciona todas as chaves (séries) do objeto iphoneModels como opções
+            Object.keys(iphoneModels).forEach(series => {
+                const option = document.createElement('option');
+                option.value = series;
+                option.textContent = series;
+                seriesSelect.appendChild(option);
+            });
+        }
+        
+        // Garante que as configurações de inicialização sejam carregadas
+        window.onload = function() {
+            populateSeries(); // Carrega as opções de série do iPhone
+        };
+    </script>
+</body>
+</html>
