@@ -291,9 +291,34 @@
     saveDraft();
   }
 
+  // ---------- 番地: precisa ter o número do endereço (ex.: 4-33), não só o do apartamento ----------
+  function hasBanchi(v) {
+    const z = toHalf(String(v || "")).replace(/[－‐ー−―]/g, "-").trim();
+    if (!z) return false;
+    if (/\d+\s*-\s*\d+/.test(z)) return true;                       // 4-33, 1-2-3
+    if (/\d+\s*(番地|番|丁目)/.test(z)) return true;                   // 123番地, 4丁目
+    if (/\d+\s*号(?!室)/.test(z)) return true;                        // 33号 (não 103号室)
+    if (/[一二三四五六七八九十]+\s*(丁目|番)/.test(z)) return true;        // 四丁目
+    if (/^\d+(\s|$)/.test(z)) return true;                           // 123 ou "123 ビル名"
+    return false;                                                      // ex.: só "クリスタルオアシス103"
+  }
+  // o preenchimento automático do Safari pode repetir o bairro (ex.: cidade "西尾市田貫" e rua "田貫4-33…")
+  function cleanStreet() {
+    const st = $("street"), city = $("city").value.trim(), pref = $("pref").value.trim();
+    let v = st.value.replace(/\s+/g, " ").trim();
+    if (pref && v.startsWith(pref)) v = v.slice(pref.length).trim();
+    if (city && v.startsWith(city)) v = v.slice(city.length).trim();
+    for (let n = Math.min(city.length, v.length); n >= 2; n--) {
+      if (city.endsWith(v.slice(0, n))) { v = v.slice(n).trim(); break; }
+    }
+    if (v !== st.value) st.value = v;
+  }
+  $("street").addEventListener("change", cleanStreet);
+  $("street").addEventListener("blur", cleanStreet);
+
   // ---------- Rascunho (só neste aparelho) ----------
   const DRAFT_KEY = "yuso-shuri-rascunho";
-  const textIds = ["name", "phone", "email", "zip", "pref", "city", "street", "building", "problem", "other-model"];
+  const textIds = ["name", "phone", "email", "zip", "pref", "city", "street", "problem", "other-model"];
   function saveDraft() {
     try {
       const d = { tipo, model: model.value, sel, step };
@@ -323,7 +348,7 @@
   }
   form.addEventListener("input", (e) => {
     if (e.target.style) e.target.style.borderColor = ""; // tira o vermelho quando o cliente corrige
-    if (e.target.id === "street" && /[0-9０-９一二三四五六七八九十]/.test(e.target.value)) $("street-msg").classList.add("hidden");
+    if (e.target.id === "street" && hasBanchi(e.target.value)) $("street-msg").classList.add("hidden");
     saveDraft();
   });
 
@@ -342,8 +367,9 @@
     const p = $("phone").value;
     if (p && (p.length < 10 || p.length > 11)) { $("phone").style.borderColor = "var(--err)"; bad($("phone")); }
     if (zipDigits().length !== 7) { $("zip").style.borderColor = "var(--err)"; bad($("zip")); }
+    cleanStreet();
     const street = $("street").value;
-    const noNumber = street.trim() && !/[0-9０-９一二三四五六七八九十]/.test(street);
+    const noNumber = street.trim() && !hasBanchi(street);
     $("street-msg").classList.toggle("hidden", !noNumber);
     if (noNumber) { $("street").style.borderColor = "var(--err)"; bad($("street")); }
     return first;
@@ -362,7 +388,7 @@
       "Nome": $("name").value.trim(),
       "Telefone": $("phone").value,
       "email": $("email").value.trim(),
-      "Endereco": `〒${$("zip").value} ${$("pref").value.trim()}${$("city").value.trim()}${$("street").value.trim()} ${$("building").value.trim()}`.trim(),
+      "Endereco": `〒${$("zip").value} ${$("pref").value.trim()}${$("city").value.trim()}${$("street").value.trim()}`.trim(),
       "Idioma do cliente": lang() === "pt" ? "Português" : "日本語",
     };
   }
