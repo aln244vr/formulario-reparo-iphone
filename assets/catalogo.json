@@ -299,9 +299,15 @@
           "grupo": "custom"
         },
         {
-          "id": "paddles",
-          "pt": "Paddles traseiros",
-          "jp": "背面パドル追加",
+          "id": "paddles-rise4-preto",
+          "pt": "Paddles RISE4 · preto",
+          "jp": "RISE4 背面パドル（黒）",
+          "grupo": "custom"
+        },
+        {
+          "id": "paddles-rise4-branco",
+          "pt": "Paddles RISE4 · branco c/ carcaça",
+          "jp": "RISE4 背面パドル（白・シェル付き）",
           "grupo": "custom"
         },
         {
@@ -324,8 +330,8 @@
         },
         {
           "id": "clique",
-          "pt": "Gatilhos de clique (estilo mouse)",
-          "jp": "クリックトリガー",
+          "pt": "Kit clique (botões + gatilhos)",
+          "jp": "クリックキット（ボタン＋トリガー）",
           "grupo": "custom"
         },
         {
