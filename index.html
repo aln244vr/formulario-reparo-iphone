@@ -35,46 +35,57 @@
   <form id="repairForm" class="card lift" novalidate>
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
 
-    <!-- Aparelho -->
-    <div class="field">
-      <span class="label"><span lang="ja">修理するもの</span><span lang="pt">O que vai consertar?</span></span>
-      <div class="seg" id="tipo">
+    <!-- Navegação entre as telas -->
+    <div class="wz-head">
+      <button type="button" class="wz-back" id="wz-back" hidden>‹ <span lang="ja">戻る</span><span lang="pt">Voltar</span></button>
+      <div class="wz-dots" id="wz-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="box box-info hidden" id="estimate" style="margin-bottom:14px">
+      <div class="estimate">
+        <span><span lang="ja">目安料金</span><span lang="pt">Estimativa</span></span>
+        <strong id="estimate-value"></strong>
+      </div>
+    </div>
+
+    <!-- 1. Aparelho -->
+    <section class="wz" data-step="1">
+      <h2 class="wz-title"><span lang="ja">修理するものは？</span><span lang="pt">O que vai consertar?</span></h2>
+      <div class="seg seg-big" id="tipo">
         <button type="button" data-tipo="iphone"><span class="ico">📱</span>iPhone</button>
         <button type="button" data-tipo="console"><span class="ico">🎮</span><span lang="ja">ゲーム機</span><span lang="pt">Console</span></button>
         <button type="button" data-tipo="controle"><span class="ico">🕹️</span><span lang="ja">コントローラー</span><span lang="pt">Controle</span></button>
       </div>
       <div class="msg err hidden" id="tipo-msg"><span lang="ja">選んでください</span><span lang="pt">Escolha uma opção</span></div>
-    </div>
+    </section>
 
-    <div id="detalhes" class="hidden">
-      <div class="field">
-        <label for="model"><span lang="ja">機種</span><span lang="pt">Modelo</span></label>
-        <select id="model" required></select>
-      </div>
-
-      <div class="field hidden" id="other-model-wrap">
-        <input type="text" id="other-model" data-ph-ja="機種名を入力" data-ph-pt="Digite o modelo">
-      </div>
-
-      <div class="field">
-        <span class="label"><span lang="ja">修理内容</span><span lang="pt">Serviço</span></span>
-        <div class="chips" id="services"></div>
-        <div class="msg err hidden" id="services-msg"><span lang="ja">1つ以上選んでください</span><span lang="pt">Escolha pelo menos um</span></div>
-      </div>
-
-      <div class="box box-info hidden" id="estimate" style="margin-bottom:16px">
-        <div class="estimate">
-          <span><span lang="ja">目安料金</span><span lang="pt">Estimativa</span></span>
-          <strong id="estimate-value"></strong>
-        </div>
-      </div>
-
-      <div class="field">
+    <!-- 2. Serviço (com opções, ex.: Hall Effect ou TMR) -->
+    <section class="wz" data-step="2" hidden>
+      <h2 class="wz-title"><span lang="ja">修理内容は？</span><span lang="pt">Qual serviço?</span></h2>
+      <p class="hint" style="margin:-6px 0 12px"><span lang="ja">複数選べます</span><span lang="pt">Pode escolher mais de um</span></p>
+      <div class="chips" id="services"></div>
+      <div class="msg err hidden" id="services-msg"><span lang="ja">1つ以上選んでください</span><span lang="pt">Escolha pelo menos um</span></div>
+      <div class="field" style="margin-top:14px">
         <label for="problem"><span lang="ja">症状</span><span lang="pt">O que aconteceu?</span> <span class="hint">(<span lang="ja">任意</span><span lang="pt">opcional</span>)</span></label>
-        <textarea id="problem" rows="3" data-ph-ja="例: 落としてから画面がつかない" data-ph-pt="Ex.: Caiu e a tela não acende"></textarea>
+        <textarea id="problem" rows="2" data-ph-ja="例: 落としてから画面がつかない" data-ph-pt="Ex.: Caiu e a tela não acende"></textarea>
       </div>
+      <button type="button" class="btn btn-primary" data-next="3"><span lang="ja">次へ</span><span lang="pt">Próximo</span> ›</button>
+    </section>
 
-      <div class="divider"></div>
+    <!-- 3. Modelo -->
+    <section class="wz" data-step="3" hidden>
+      <h2 class="wz-title"><span lang="ja">機種は？</span><span lang="pt">Qual é o modelo?</span></h2>
+      <input type="hidden" id="model">
+      <div id="models"></div>
+      <div class="field hidden" id="other-model-wrap" style="margin-top:12px">
+        <input type="text" id="other-model" data-ph-ja="機種名を入力" data-ph-pt="Digite o modelo">
+        <button type="button" class="btn btn-primary" data-next="4" style="margin-top:10px"><span lang="ja">次へ</span><span lang="pt">Próximo</span> ›</button>
+      </div>
+      <div class="msg err hidden" id="model-msg"><span lang="ja">機種を選んでください</span><span lang="pt">Escolha o modelo</span></div>
+    </section>
+
+    <!-- 4. Dados e envio -->
+    <section class="wz" data-step="4" hidden>
+      <div class="wz-sum" id="wz-sum"></div>
 
       <div class="field">
         <label for="name"><span lang="ja">お名前</span><span lang="pt">Nome</span></label>
@@ -137,7 +148,7 @@
         <span lang="ja">24時間以内にメールで発送方法をご案内します。<a href="guia.html">送り方・FAQ</a></span>
         <span lang="pt">Respondemos em até 24 h com as instruções de envio. <a href="guia.html">Como enviar · FAQ</a></span>
       </p>
-    </div>
+    </section>
   </form>
 </main>
 

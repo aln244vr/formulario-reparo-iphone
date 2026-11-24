@@ -1,6 +1,6 @@
 /*
- * Formulário único: iPhone, console e controle.
- * Preços e serviços ficam em assets/config.js.
+ * Formulário de pedido em telas: 1 aparelho → 2 serviço (e opção) → 3 modelo → 4 dados.
+ * Modelos, serviços, opções e preços vêm de assets/catalogo.json (editado pelo admin.html).
  */
 (function () {
   "use strict";
@@ -8,17 +8,41 @@
   const root = document.documentElement;
   const lang = () => root.dataset.lang || "ja";
   const t = (ja, pt) => (lang() === "pt" ? pt : ja);
+  const yen = (n) => "¥" + n.toLocaleString("ja-JP");
 
-  // ---------- Catálogo (assets/catalogo.json, editado pelo admin.html) ----------
   let TIPOS = {};
   const OUTRO = "__outro__";
   let tipo = null;
+  let sel = {};   // serviços escolhidos: { idDoServiço: idDaOpção | true }
+  let step = 1;
+
+  // ---------- Telas ----------
+  const form = $("repairForm");
+  function go(n, noScroll) {
+    step = n;
+    document.querySelectorAll(".wz").forEach((s) => (s.hidden = +s.dataset.step !== n));
+    $("wz-back").hidden = n === 1;
+    document.querySelectorAll("#wz-dots i").forEach((d, i) => d.classList.toggle("on", i === n - 1));
+    if (n === 4) renderSummary();
+    updateEstimate();
+    if (!noScroll) form.scrollIntoView({ behavior: "smooth", block: "start" });
+    saveDraft();
+  }
+  $("wz-back").addEventListener("click", () => go(Math.max(1, step - 1)));
+  form.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-next]");
+    if (!b) return;
+    const n = +b.dataset.next;
+    if (n === 3 && !Object.keys(sel).length) { $("services-msg").classList.remove("hidden"); return; }
+    if (n === 4 && !modelText()) { $("model-msg").classList.remove("hidden"); return; }
+    go(n);
+  });
 
   // ---------- Idioma ----------
   function applyLang() {
     document.querySelectorAll("[data-set-lang]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.setLang === lang())));
     document.querySelectorAll("[data-ph-ja]").forEach((el) => (el.placeholder = t(el.dataset.phJa, el.dataset.phPt)));
-    if (tipo) { const keep = model.value; fillModels(); model.value = keep; renderServices(checked()); }
+    if (tipo) { renderServices(); renderModels(); if (step === 4) renderSummary(); updateEstimate(); }
   }
   document.querySelectorAll("[data-set-lang]").forEach((b) => b.addEventListener("click", () => {
     root.dataset.lang = root.lang = b.dataset.setLang;
@@ -26,55 +50,38 @@
     applyLang();
   }));
 
-  // ---------- Tipo ----------
-  const model = $("model");
-  document.querySelectorAll("[data-tipo]").forEach((b) => b.addEventListener("click", () => selectTipo(b.dataset.tipo)));
-
+  // ---------- 1. Aparelho ----------
+  document.querySelectorAll("[data-tipo]").forEach((b) => b.addEventListener("click", () => { selectTipo(b.dataset.tipo); go(2); }));
   function selectTipo(id) {
     if (!TIPOS[id]) return;
+    if (tipo !== id) { sel = {}; $("model").value = ""; }
     tipo = id;
     document.querySelectorAll("[data-tipo]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tipo === id)));
     $("tipo-msg").classList.add("hidden");
-    $("detalhes").classList.remove("hidden");
-    fillModels();
-    renderServices([]);
-    onModelChange();
-    saveDraft();
+    renderServices();
+    renderModels();
   }
 
-  function fillModels() {
-    model.innerHTML = "";
-    const ph = new Option(t("選択してください", "Selecione"), "");
-    ph.disabled = true; ph.selected = true;
-    model.add(ph);
-    (TIPOS[tipo].modelos || []).forEach(({ grupo: g, itens }) => {
-      const og = document.createElement("optgroup"); og.label = g;
-      itens.forEach((m) => og.appendChild(new Option(m, m)));
-      model.appendChild(og);
-    });
-    model.add(new Option(t("その他・わからない", "Outro / não sei"), OUTRO));
-  }
-
-  function onModelChange() {
-    const other = model.value === OUTRO;
-    $("other-model-wrap").classList.toggle("hidden", !other);
-    $("other-model").required = other;
-    updateEstimate();
-  }
-  model.addEventListener("change", () => { model.style.borderColor = ""; onModelChange(); saveDraft(); });
-
-  // ---------- Serviços ----------
+  // ---------- 2. Serviços e opções ----------
   const servicos = () => (tipo ? TIPOS[tipo].servicos || [] : []);
-  const checked = () => [...$("services").querySelectorAll("input:checked")].map((c) => c.value);
+  const svcById = (id) => servicos().find((x) => x.id === id);
+  const optOf = (s) => (s && Array.isArray(s.opcoes) && s.opcoes.length ? (s.opcoes.find((o) => o.id === sel[s.id]) || s.opcoes[0]) : null);
+  const priceTxt = (v) => (typeof v === "number" ? yen(v) : "");
 
-  function chip(s, selected) {
+  function card(s) {
     const l = document.createElement("label");
     const c = document.createElement("input");
-    c.type = "checkbox"; c.value = s.id; c.checked = (selected || []).includes(s.id);
-    const yenTxt = typeof s.preco === "number" ? "¥" + s.preco.toLocaleString("ja-JP") : "";
-    const desc = [t(s.djp, s.dpt), yenTxt].filter(Boolean).join(" · ");
+    c.type = "checkbox"; c.value = s.id; c.checked = !!sel[s.id];
+    c.addEventListener("change", () => {
+      if (c.checked) sel[s.id] = s.opcoes && s.opcoes.length ? s.opcoes[0].id : true; else delete sel[s.id];
+      $("services-msg").classList.add("hidden");
+      renderServices(); updateEstimate(); saveDraft();
+    });
+    const hasOpts = Array.isArray(s.opcoes) && s.opcoes.length;
+    const precoMin = hasOpts ? Math.min(...s.opcoes.map((o) => (typeof o.preco === "number" ? o.preco : Infinity))) : s.preco;
+    const precoTxt = typeof precoMin === "number" && isFinite(precoMin) ? (hasOpts ? t(yen(precoMin) + "〜", "a partir de " + yen(precoMin)) : yen(precoMin)) : "";
+    const desc = [t(s.djp, s.dpt), precoTxt].filter(Boolean).join(" · ");
     if (desc) {
-      /* com descrição: vira um cartão com nome e explicação curta */
       l.className = "svc-card";
       const txt = document.createElement("span");
       const b = document.createElement("b"); b.textContent = t(s.jp, s.pt);
@@ -84,50 +91,126 @@
     } else {
       l.append(c, document.createTextNode(t(s.jp, s.pt)));
     }
-    return l;
+    const frag = [l];
+    // Opções aparecem depois de marcar o serviço (ex.: Hall Effect padrão ou TMR)
+    if (hasOpts && sel[s.id]) {
+      const box = document.createElement("div");
+      box.className = "svc-opts";
+      s.opcoes.forEach((o) => {
+        const ol = document.createElement("label"); ol.className = "opt";
+        const r = document.createElement("input"); r.type = "radio"; r.name = "opt-" + s.id; r.checked = (optOf(s) || {}).id === o.id;
+        r.addEventListener("change", () => { sel[s.id] = o.id; updateEstimate(); saveDraft(); });
+        const sp = document.createElement("span");
+        const ob = document.createElement("b"); ob.textContent = t(o.jp, o.pt) + (typeof o.preco === "number" ? " · " + yen(o.preco) : "");
+        sp.append(ob);
+        const od = t(o.djp, o.dpt); if (od) { const sm = document.createElement("small"); sm.textContent = od; sp.append(sm); }
+        ol.append(r, sp); box.append(ol);
+      });
+      frag.push(box);
+    }
+    return frag;
   }
-  function renderServices(selected) {
+  function renderServices() {
     const box = $("services");
     box.innerHTML = "";
     const list = servicos();
-    list.filter((s) => s.grupo !== "custom").forEach((s) => box.appendChild(chip(s, selected)));
-
+    list.filter((s) => s.grupo !== "custom").forEach((s) => box.append(...card(s)));
     // Personalização: escondida atrás de um botão
     const custom = list.filter((s) => s.grupo === "custom");
     if (!custom.length) return;
-    const open = custom.some((s) => (selected || []).includes(s.id));
+    const open = custom.some((s) => sel[s.id]) || box.dataset.customOpen === "1";
     const btn = document.createElement("button");
     btn.type = "button"; btn.className = "custom-toggle";
     const panel = document.createElement("div");
     panel.className = "chips custom-panel" + (open ? "" : " hidden");
-    custom.forEach((s) => panel.appendChild(chip(s, selected)));
+    custom.forEach((s) => panel.append(...card(s)));
     const label = () => {
-      const n = panel.querySelectorAll("input:checked").length;
+      const n = custom.filter((s) => sel[s.id]).length;
       btn.textContent = "🎨 " + t("カスタマイズ", "Personalização") + (n ? ` (${n})` : "") + (panel.classList.contains("hidden") ? " ▾" : " ▴");
     };
-    btn.addEventListener("click", () => { panel.classList.toggle("hidden"); label(); });
-    panel.addEventListener("change", label);
+    btn.addEventListener("click", () => { panel.classList.toggle("hidden"); box.dataset.customOpen = panel.classList.contains("hidden") ? "" : "1"; label(); });
     label();
     box.append(btn, panel);
   }
-  $("services").addEventListener("change", () => { $("services-msg").classList.add("hidden"); updateEstimate(); saveDraft(); });
 
-  // ---------- Estimativa (só aparece se houver preço em config.js) ----------
-  const yen = (n) => "¥" + n.toLocaleString("ja-JP");
-  function updateEstimate() {
-    const box = $("estimate"), sel = checked();
-    const table = ((tipo && TIPOS[tipo].precos) || {})[model.value] || {};
-    let total = 0, unknown = false;
-    sel.forEach((id) => {
-      let v = table[id];
-      if (typeof v !== "number") { const sv = servicos().find((x) => x.id === id); if (sv && typeof sv.preco === "number") v = sv.preco; } // valor do serviço (vindo do caixa)
-      if (typeof v === "number") total += v; else unknown = true;
+  // ---------- 3. Modelo (botões) ----------
+  const model = $("model");
+  const modelText = () => (model.value === OUTRO ? $("other-model").value.trim() : model.value);
+  function renderModels() {
+    const box = $("models");
+    box.innerHTML = "";
+    const grupos = (TIPOS[tipo] && TIPOS[tipo].modelos) || [];
+    const mk = (g, parent) => {
+      const w = document.createElement("div"); w.className = "mgrp";
+      const h = document.createElement("h3"); h.textContent = g.grupo;
+      const grid = document.createElement("div"); grid.className = "mgrid";
+      (g.itens || []).forEach((m) => grid.append(modelBtn(m, m)));
+      w.append(h, grid); parent.append(w);
+    };
+    // séries mais novas à vista; as antigas recolhidas
+    grupos.slice(0, 4).forEach((g) => mk(g, box));
+    if (grupos.length > 4) {
+      const d = document.createElement("details"); d.className = "mgrp-more";
+      const sm = document.createElement("summary"); sm.textContent = t("その他のモデル", "Outros modelos") + " (" + grupos.slice(4).reduce((a, g) => a + (g.itens || []).length, 0) + ")";
+      d.append(sm);
+      grupos.slice(4).forEach((g) => mk(g, d));
+      if (grupos.slice(4).some((g) => (g.itens || []).includes(model.value))) d.open = true;
+      box.append(d);
+    }
+    const other = modelBtn(OUTRO, t("その他・わからない", "Outro / não sei"));
+    other.style.width = "100%";
+    box.append(other);
+    $("other-model-wrap").classList.toggle("hidden", model.value !== OUTRO);
+  }
+  function modelBtn(value, text) {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = text;
+    b.setAttribute("aria-pressed", String(model.value === value));
+    b.addEventListener("click", () => {
+      model.value = value;
+      $("model-msg").classList.add("hidden");
+      document.querySelectorAll("#models button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      $("other-model-wrap").classList.toggle("hidden", value !== OUTRO);
+      saveDraft();
+      if (value === OUTRO) $("other-model").focus(); else go(4);
     });
-    if (!sel.length || !total) { box.classList.add("hidden"); return; }
+    return b;
+  }
+
+  // ---------- Estimativa ----------
+  function lineItems() {
+    return Object.keys(sel).map((id) => {
+      const s = svcById(id); if (!s) return null;
+      const o = optOf(s);
+      const table = ((TIPOS[tipo].precos || {})[model.value]) || {};
+      let v = o ? o.preco : table[id];
+      if (typeof v !== "number") v = typeof s.preco === "number" ? s.preco : undefined;
+      return { s, o, v };
+    }).filter(Boolean);
+  }
+  function updateEstimate() {
+    const box = $("estimate"), L = tipo ? lineItems() : [];
+    let total = 0, unknown = false;
+    L.forEach((l) => { if (typeof l.v === "number") total += l.v; else unknown = true; });
+    if (step < 2 || !L.length || !total) { box.classList.add("hidden"); return; }
     $("estimate-value").textContent = yen(total) + (unknown ? " 〜" : "");
     box.classList.remove("hidden");
   }
   const estimateText = () => ($("estimate").classList.contains("hidden") ? "Sob orçamento" : $("estimate-value").textContent);
+
+  // ---------- 4. Resumo ----------
+  function renderSummary() {
+    const box = $("wz-sum"); box.innerHTML = "";
+    const line = (label, value, back) => {
+      const p = document.createElement("div");
+      const b = document.createElement("b"); b.textContent = label + ": ";
+      p.append(b, document.createTextNode(value));
+      if (back) { const x = document.createElement("button"); x.type = "button"; x.textContent = t("変更", "alterar"); x.style.marginLeft = "8px"; x.onclick = () => go(back); p.append(x); }
+      box.append(p);
+    };
+    line(t("修理内容", "Serviço"), lineItems().map((l) => t(l.s.jp, l.s.pt) + (l.o ? " (" + t(l.o.jp, l.o.pt) + ")" : "")).join(" + "), 2);
+    line(t("機種", "Modelo"), modelText(), 3);
+  }
 
   // ---------- Números ----------
   const toHalf = (s) => s.replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xFEE0));
@@ -170,7 +253,6 @@
     onZip(true);
   });
   function setZipMsg(text, err) { zipMsg.textContent = text; zipMsg.className = "msg " + (err ? "err" : "ok"); }
-
   function zipcloud(d) {
     return new Promise((resolve, reject) => {
       const cb = "zipcb_" + Date.now(), s = document.createElement("script");
@@ -192,7 +274,6 @@
     if (!a || !a.ja) throw new Error("notfound");
     return { pref: a.ja.prefecture, city: (a.ja.address1 || "") + (a.ja.address2 || "") };
   }
-
   async function lookupZip(d) {
     searching = d;
     setZipMsg(t("検索中…", "Buscando…"), false);
@@ -215,7 +296,7 @@
   const textIds = ["name", "phone", "email", "zip", "pref", "city", "street", "building", "problem", "other-model"];
   function saveDraft() {
     try {
-      const d = { tipo, model: model.value, services: checked() };
+      const d = { tipo, model: model.value, sel, step };
       textIds.forEach((id) => (d[id] = $(id).value));
       localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
     } catch (_) {}
@@ -225,29 +306,36 @@
     try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null"); } catch (_) {}
     // Link direto: index.html?tipo=console (o antigo consoles.html usa isso)
     const fromUrl = new URLSearchParams(location.search).get("tipo");
-    if (fromUrl && TIPOS[fromUrl] && (!d || d.tipo !== fromUrl)) d = Object.assign({}, d, { tipo: fromUrl, model: "", services: [] });
-    if (!d) return;
+    if (fromUrl && TIPOS[fromUrl] && (!d || d.tipo !== fromUrl)) d = Object.assign({}, d, { tipo: fromUrl, model: "", sel: {}, step: 2 });
+    if (!d) return go(1, true);
     textIds.forEach((id) => { if (d[id]) $(id).value = d[id]; });
     if (d.tipo && TIPOS[d.tipo]) {
       selectTipo(d.tipo);
-      if (d.model) model.value = d.model;
-      renderServices(d.services);
-      onModelChange();
-    }
+      sel = d.sel && typeof d.sel === "object" ? d.sel : {};
+      Object.keys(sel).forEach((id) => { if (!svcById(id)) delete sel[id]; });
+      model.value = d.model || "";
+      renderServices(); renderModels();
+      let n = Math.min(Math.max(+d.step || 2, 2), 4);
+      if (n >= 3 && !Object.keys(sel).length) n = 2;
+      if (n === 4 && !modelText()) n = 3;
+      go(n, true);
+    } else go(1, true);
   }
-  $("repairForm").addEventListener("input", (e) => {
+  form.addEventListener("input", (e) => {
     if (e.target.style) e.target.style.borderColor = ""; // tira o vermelho quando o cliente corrige
     if (e.target.id === "street" && /[0-9０-９一二三四五六七八九十]/.test(e.target.value)) $("street-msg").classList.add("hidden");
     saveDraft();
   });
 
   // ---------- Validação ----------
-  const form = $("repairForm"), submitBtn = $("submit-btn");
+  const submitBtn = $("submit-btn");
   function validate() {
+    if (!tipo) { go(1); return $("tipo"); }
+    if (!Object.keys(sel).length) { go(2); $("services-msg").classList.remove("hidden"); return $("services"); }
+    if (!modelText()) { go(3); $("model-msg").classList.remove("hidden"); return $("models"); }
     let first = null;
     const bad = (el) => { if (!first) first = el; };
-    if (!tipo) { $("tipo-msg").classList.remove("hidden"); bad($("tipo")); return first; }
-    [model, $("other-model"), $("name"), $("phone"), $("email"), $("zip"), $("pref"), $("city"), $("street")].forEach((el) => {
+    [$("name"), $("phone"), $("email"), $("zip"), $("pref"), $("city"), $("street")].forEach((el) => {
       el.style.borderColor = "";
       if (el.required && (!el.value.trim() || !el.checkValidity())) { el.style.borderColor = "var(--err)"; bad(el); }
     });
@@ -258,20 +346,17 @@
     const noNumber = street.trim() && !/[0-9０-９一二三四五六七八九十]/.test(street);
     $("street-msg").classList.toggle("hidden", !noNumber);
     if (noNumber) { $("street").style.borderColor = "var(--err)"; bad($("street")); }
-    if (!checked().length) { $("services-msg").classList.remove("hidden"); bad($("services")); }
     return first;
   }
 
   // ---------- Envio ----------
   const ENVIO = window.ENVIO || {};
-  const svcName = (id) => { const s = servicos().find((x) => x.id === id); return s ? `${s.pt} (${s.jp})` : id; };
-
   function payload() {
     const modelo = model.value === OUTRO ? $("other-model").value.trim() + " (digitado)" : model.value;
     return {
       "Tipo": TIPOS[tipo].nome,
       "Modelo": modelo,
-      "Servicos": checked().map(svcName).join(", "),
+      "Servicos": lineItems().map((l) => `${l.s.pt}${l.o ? " — " + l.o.pt : ""} (${l.s.jp}${l.o ? " " + l.o.jp : ""})`).join(", "),
       "Estimativa": estimateText(),
       "Problema": $("problem").value.trim() || "-",
       "Nome": $("name").value.trim(),
@@ -282,7 +367,7 @@
     };
   }
 
-  // Código com o pedido inteiro, para colar no sistema Pedidos & caixa (caixa "Colar pedido do cliente")
+  // Código com o pedido inteiro, para colar no sistema Pedidos & caixa
   function localDate() {
     const n = new Date(), p = (x) => String(x).padStart(2, "0");
     return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
@@ -291,7 +376,8 @@
     const est = parseInt(String(data.Estimativa).replace(/[^\d]/g, ""), 10);
     const j = {
       v: 1, d: localDate(), t: tipo, m: data.Modelo,
-      s: checked().map((id) => { const s = servicos().find((x) => x.id === id); return s ? s.pt : id; }),
+      // com opção, vai o nome do serviço do caixa (ex.: "Analógicos TMR K-Silver")
+      s: lineItems().map((l) => (l.o ? l.o.caixa || `${l.s.pt} · ${l.o.pt}` : l.s.pt)),
       e: est > 0 ? est : null, p: data.Problema === "-" ? "" : data.Problema,
       n: data.Nome, tel: data.Telefone, mail: data.email, end: data.Endereco, l: lang(),
     };
@@ -314,9 +400,11 @@
     e.preventDefault();
     const first = validate();
     if (first) {
-      $("form-msg").textContent = t("赤い項目を確認してください", "Confira os campos em vermelho");
-      $("form-msg").classList.remove("hidden");
-      first.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (step === 4) {
+        $("form-msg").textContent = t("赤い項目を確認してください", "Confira os campos em vermelho");
+        $("form-msg").classList.remove("hidden");
+        first.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
     $("form-msg").classList.add("hidden");

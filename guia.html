@@ -137,7 +137,12 @@
     const wrap = document.getElementById("price-tables");
     Object.values(cat.tipos || {}).forEach((tp) => {
       /* valores por serviço (enviados do caixa) */
-      const fixos = (tp.servicos || []).filter((s) => typeof s.preco === "number");
+      /* serviços com opções (ex.: Hall Effect / TMR) viram uma linha por opção */
+      const fixos = [];
+      (tp.servicos || []).forEach((s) => {
+        if (Array.isArray(s.opcoes) && s.opcoes.length) s.opcoes.forEach((o) => { if (typeof o.preco === "number") fixos.push({ pt: s.pt + " · " + o.pt, jp: s.jp + " · " + o.jp, dpt: o.dpt, preco: o.preco }); });
+        else if (typeof s.preco === "number") fixos.push(s);
+      });
       if (fixos.length) {
         const h0 = document.createElement("h3");
         h0.textContent = tp.nomeJa === tp.nome ? tp.nome : tp.nomeJa + " · " + tp.nome;
