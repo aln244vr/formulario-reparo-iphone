@@ -24,9 +24,9 @@ window.LOJA = {
  *                  e cole em web3formsChave. (Plano grátis não envia fotos.)
  */
 window.ENVIO = {
-  servico: "formsubmit",
-  web3formsChave: "",
-  emailLoja: "aln244vr@gmail.com", // usado no botão "enviar por e-mail" se o serviço falhar
+  servico: "web3forms",
+  web3formsChave: "d254e50d-7509-4363-a0a7-d174db5bb23a", // chave pública (feita para ficar no site)
+  emailLoja: "anovammtech@gmail.com", // usado no botão "enviar por e-mail" se o serviço falhar
 };
 
 // Serviços: id interno -> nome exibido
