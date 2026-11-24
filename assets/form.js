@@ -266,6 +266,23 @@
     };
   }
 
+  // Código com o pedido inteiro, para colar no sistema Pedidos & caixa (caixa "Colar pedido do cliente")
+  function localDate() {
+    const n = new Date(), p = (x) => String(x).padStart(2, "0");
+    return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
+  }
+  function caixaCode(data) {
+    const est = parseInt(String(data.Estimativa).replace(/[^\d]/g, ""), 10);
+    const j = {
+      v: 1, d: localDate(), t: tipo, m: data.Modelo,
+      s: checked().map((id) => { const s = servicos().find((x) => x.id === id); return s ? s.pt : id; }),
+      e: est > 0 ? est : null, p: data.Problema === "-" ? "" : data.Problema,
+      n: data.Nome, tel: data.Telefone, mail: data.email, end: data.Endereco, l: lang(),
+    };
+    const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(j)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    return "ANOVA1:" + b64 + ".";
+  }
+
   function request(data) {
     const subject = `${TIPOS[tipo].assunto}: ${data.Modelo} — ${data.Nome}`;
     const honey = form.elements._honey.value;
@@ -292,7 +309,9 @@
     submitBtn.disabled = true;
     submitBtn.textContent = t("送信中…", "Enviando…");
 
-    const data = payload(), { url, body } = request(data);
+    const data = payload();
+    data["Codigo para o caixa"] = caixaCode(data);
+    const { url, body } = request(data);
     const ctrl = new AbortController(), timer = setTimeout(() => ctrl.abort(), 30000);
     try {
       const res = await fetch(url, { method: "POST", body, signal: ctrl.signal,
