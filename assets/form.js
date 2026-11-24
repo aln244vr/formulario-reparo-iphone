@@ -9,46 +9,8 @@
   const lang = () => root.dataset.lang || "ja";
   const t = (ja, pt) => (lang() === "pt" ? pt : ja);
 
-  // ---------- Modelos por tipo ----------
-  const TIPOS = {
-    iphone: {
-      nome: "iPhone", assunto: "NOVO PEDIDO - iPhone",
-      grupos: {
-        "iPhone 17": ["iPhone 17", "iPhone Air", "iPhone 17 Pro", "iPhone 17 Pro Max"],
-        "iPhone 16": ["iPhone 16", "iPhone 16e", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max"],
-        "iPhone 15": ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"],
-        "iPhone 14": ["iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max"],
-        "iPhone 13": ["iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max"],
-        "iPhone 12": ["iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max"],
-        "iPhone 11": ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max"],
-        "iPhone X / XS / XR": ["iPhone XS", "iPhone XS Max", "iPhone XR", "iPhone X"],
-        "iPhone SE": ["iPhone SE (3ª/第3世代)", "iPhone SE (2ª/第2世代)", "iPhone SE (1ª/第1世代)"],
-        "iPhone 8 –": ["iPhone 8", "iPhone 8 Plus", "iPhone 7", "iPhone 7 Plus", "iPhone 6s –"],
-      },
-      servicos: () => window.SERVICOS || [],
-      precos: () => window.PRECOS || {},
-    },
-    console: {
-      nome: "Console", assunto: "NOVO PEDIDO - Console",
-      grupos: {
-        "PlayStation 5": ["PS5 (CFI-1000〜1200)", "PS5 Digital (CFI-1000〜1200)", "PS5 Slim (CFI-2000)", "PS5 Pro (CFI-7000)"],
-        "PlayStation 4": ["PS4 (CUH-1000〜1200)", "PS4 Slim (CUH-2000〜2200)", "PS4 Pro (CUH-7000〜7200)"],
-        "PlayStation 3": ["PS3 Fat (CECHA〜CECHQ)", "PS3 Slim (CECH-2000〜3000)", "PS3 Super Slim (CECH-4000)"],
-        "Xbox": ["Xbox Series X", "Xbox Series S", "Xbox One X", "Xbox One S", "Xbox One", "Xbox 360"],
-      },
-      servicos: () => (window.CONSOLE_SERVICOS || []).filter((s) => !s.tipo || s.tipo === "console"),
-      precos: () => window.CONSOLE_PRECOS || {},
-    },
-    controle: {
-      nome: "Controle", assunto: "NOVO PEDIDO - Controle",
-      grupos: {
-        "PlayStation": ["DualSense (PS5)", "DualSense Edge (PS5)", "DUALSHOCK 4 (PS4)", "DUALSHOCK 3 (PS3)"],
-        "Xbox": ["Xbox Series", "Xbox One", "Xbox Elite Series 2", "Xbox 360"],
-      },
-      servicos: () => (window.CONSOLE_SERVICOS || []).filter((s) => !s.tipo || s.tipo === "controle"),
-      precos: () => window.CONSOLE_PRECOS || {},
-    },
-  };
+  // ---------- Catálogo (assets/catalogo.json, editado pelo admin.html) ----------
+  let TIPOS = {};
   const OUTRO = "__outro__";
   let tipo = null;
 
@@ -85,7 +47,7 @@
     const ph = new Option(t("選択してください", "Selecione"), "");
     ph.disabled = true; ph.selected = true;
     model.add(ph);
-    Object.entries(TIPOS[tipo].grupos).forEach(([g, itens]) => {
+    (TIPOS[tipo].modelos || []).forEach(({ grupo: g, itens }) => {
       const og = document.createElement("optgroup"); og.label = g;
       itens.forEach((m) => og.appendChild(new Option(m, m)));
       model.appendChild(og);
@@ -102,34 +64,39 @@
   model.addEventListener("change", () => { model.style.borderColor = ""; onModelChange(); saveDraft(); });
 
   // ---------- Serviços ----------
-  const servicos = () => (tipo ? TIPOS[tipo].servicos() : []);
+  const servicos = () => (tipo ? TIPOS[tipo].servicos || [] : []);
   const checked = () => [...$("services").querySelectorAll("input:checked")].map((c) => c.value);
 
+  function chip(s, selected) {
+    const l = document.createElement("label");
+    const c = document.createElement("input");
+    c.type = "checkbox"; c.value = s.id; c.checked = (selected || []).includes(s.id);
+    l.append(c, document.createTextNode(t(s.jp, s.pt)));
+    return l;
+  }
   function renderServices(selected) {
     const box = $("services");
     box.innerHTML = "";
     const list = servicos();
-    const grupos = [
-      { id: undefined, titulo: t("修理", "Reparo") },
-      { id: "custom", titulo: t("カスタマイズ", "Personalização") },
-    ];
-    const comGrupos = list.some((s) => s.grupo);
-    grupos.forEach((g) => {
-      const itens = list.filter((s) => s.grupo === g.id);
-      if (!itens.length) return;
-      if (comGrupos) {
-        const h = document.createElement("div");
-        h.className = "chips-title"; h.textContent = g.titulo;
-        box.appendChild(h);
-      }
-      itens.forEach((s) => {
-        const l = document.createElement("label");
-        const c = document.createElement("input");
-        c.type = "checkbox"; c.value = s.id; c.checked = (selected || []).includes(s.id);
-        l.append(c, document.createTextNode(t(s.jp, s.pt)));
-        box.appendChild(l);
-      });
-    });
+    list.filter((s) => s.grupo !== "custom").forEach((s) => box.appendChild(chip(s, selected)));
+
+    // Personalização: escondida atrás de um botão
+    const custom = list.filter((s) => s.grupo === "custom");
+    if (!custom.length) return;
+    const open = custom.some((s) => (selected || []).includes(s.id));
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "custom-toggle";
+    const panel = document.createElement("div");
+    panel.className = "chips custom-panel" + (open ? "" : " hidden");
+    custom.forEach((s) => panel.appendChild(chip(s, selected)));
+    const label = () => {
+      const n = panel.querySelectorAll("input:checked").length;
+      btn.textContent = "🎨 " + t("カスタマイズ", "Personalização") + (n ? ` (${n})` : "") + (panel.classList.contains("hidden") ? " ▾" : " ▴");
+    };
+    btn.addEventListener("click", () => { panel.classList.toggle("hidden"); label(); });
+    panel.addEventListener("change", label);
+    label();
+    box.append(btn, panel);
   }
   $("services").addEventListener("change", () => { $("services-msg").classList.add("hidden"); updateEstimate(); saveDraft(); });
 
@@ -137,7 +104,7 @@
   const yen = (n) => "¥" + n.toLocaleString("ja-JP");
   function updateEstimate() {
     const box = $("estimate"), sel = checked();
-    const table = (tipo ? TIPOS[tipo].precos() : {})[model.value] || {};
+    const table = ((tipo && TIPOS[tipo].precos) || {})[model.value] || {};
     let total = 0, unknown = false;
     sel.forEach((id) => { const v = table[id]; if (typeof v === "number") total += v; else unknown = true; });
     if (!sel.length || !total) { box.classList.add("hidden"); return; }
@@ -357,6 +324,13 @@
     $("fallback").classList.remove("hidden");
   }
 
+  // Carrega o catálogo e só então libera o formulário
+  fetch("assets/catalogo.json", { cache: "no-cache" })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((cat) => { TIPOS = cat.tipos || {}; applyLang(); loadDraft(); })
+    .catch(() => {
+      $("tipo-msg").textContent = t("読み込みに失敗しました。ページを再読み込みしてください", "Erro ao carregar. Atualize a página.");
+      $("tipo-msg").classList.remove("hidden");
+    });
   applyLang();
-  loadDraft();
 })();

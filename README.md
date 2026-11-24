@@ -1,31 +1,26 @@
-# Yūsō Shūri — Formulário de reparo de iPhone por correio
+# Yūsō Shūri — Formulário de reparo por correio
 
-Site estático (HTML + CSS + JS puro), bilíngue japonês/português.
+Site estático (HTML + CSS + JS puro) publicado no GitHub Pages.
 
-| Página | O que é |
+| Arquivo | O que é |
 |---|---|
 | `index.html` | Formulário único: iPhone, console e controle (japonês ou português) |
-| `consoles.html` | Redireciona para `index.html?tipo=console` (link antigo) |
+| `admin.html` | **Painel para editar modelos, serviços e preços pelo celular** |
+| `guia.html` | Como enviar, FAQ e tabela de preços |
 | `confirmacao.html` | Página exibida depois do envio |
-| `guia.html` | Como enviar o iPhone, FAQ e tabela de preços |
-| `assets/config.js` | **Único arquivo para editar no dia a dia**: preços, serviços, prazo, garantia, endereço |
-| `assets/style.css` | Visual compartilhado |
-| `assets/form.js` | Lógica do formulário (modelos, envio, CEP, idioma) |
+| `consoles.html` | Redireciona para `index.html?tipo=console` (link antigo) |
+| `assets/catalogo.json` | Modelos, serviços e preços (editado pelo painel) |
+| `assets/config.js` | Dados da loja e serviço de envio (Web3Forms) |
+| `assets/form.js` | Lógica do formulário |
+| `assets/style.css` | Visual |
 
-## Como mudar preços
-Abra `assets/config.js` e preencha `PRECOS`, por exemplo:
-
-```js
-window.PRECOS = {
-  "iPhone 12 Pro Max": { tela: 19800, bateria: 8800, camera: 14800 },
-};
-```
-
-O nome do modelo precisa ser igual ao da lista do formulário. Com pelo menos um preço preenchido,
-a estimativa aparece no formulário e a tabela aparece em `guia.html`.
-
-Os preços de consoles e controles ficam em `CONSOLE_PRECOS`, no mesmo arquivo.
+## Editar o catálogo
+Abra `https://aln244vr.github.io/formulario-reparo-iphone/admin.html`.
+Na primeira vez, crie uma chave do GitHub (o passo a passo está no próprio painel)
+com acesso só a este repositório e permissão **Contents: Read and write**.
+Ao tocar em **Salvar**, o painel grava `assets/catalogo.json` no branch `main`
+e o site atualiza em 1–2 minutos.
 
 ## Envio dos pedidos
-Os pedidos chegam por e-mail através do [FormSubmit](https://formsubmit.co).
-No primeiro envio, o FormSubmit manda um e-mail de ativação — é preciso clicar no link para começar a receber.
+Os pedidos vão pelo [Web3Forms](https://web3forms.com) para o e-mail da conta dona da chave
+configurada em `assets/config.js`.

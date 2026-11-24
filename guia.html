@@ -61,7 +61,7 @@
 
   <section class="card hidden" id="precos">
     <h2>💴 料金表 <small>· Tabela de preços</small></h2>
-    <div class="table-scroll"><table id="price-table"></table></div>
+    <div id="price-tables"></div>
     <p class="hint">税込・目安です。診断後に確定します。「—」はお見積り。<br>Valores com impostos, estimados; confirmados após diagnóstico. "—" = sob orçamento.</p>
   </section>
 
@@ -124,7 +124,7 @@
 <script src="assets/config.js"></script>
 <script>
 (function () {
-  const L = window.LOJA || {}, S = window.SERVICOS || [], P = window.PRECOS || {};
+  const L = window.LOJA || {};
   if (L.enderecoEnvio) {
     const b = document.getElementById("addr-box");
     b.textContent = "発送先 · Endereço de envio: " + L.enderecoEnvio;
@@ -132,26 +132,37 @@
   }
   if (L.garantia) document.getElementById("garantia").textContent = "保証 · Garantia: " + L.garantia;
 
-  // Tabela de preços (só aparece se houver algum preço em assets/config.js)
-  const models = Object.keys(P).filter((m) => Object.values(P[m]).some((v) => typeof v === "number"));
-  if (!models.length) return;
-  const cols = S.filter((s) => models.some((m) => typeof P[m][s.id] === "number"));
-  const t = document.getElementById("price-table");
-  const head = t.createTHead().insertRow();
-  [{ jp: "モデル", pt: "Modelo" }, ...cols].forEach((c) => {
-    const th = document.createElement("th"); th.textContent = c.jp; th.title = c.pt; head.appendChild(th);
-  });
-  const body = t.createTBody();
-  models.forEach((m) => {
-    const r = body.insertRow();
-    r.insertCell().textContent = m;
-    cols.forEach((c) => {
-      const v = P[m][c.id], td = r.insertCell();
-      td.className = "num";
-      td.textContent = typeof v === "number" ? "¥" + v.toLocaleString("ja-JP") : "—";
+  // Tabelas de preço (só aparecem para tipos com algum preço em assets/catalogo.json)
+  fetch("assets/catalogo.json", { cache: "no-cache" }).then((r) => r.json()).then((cat) => {
+    const wrap = document.getElementById("price-tables");
+    Object.values(cat.tipos || {}).forEach((tp) => {
+      const P = tp.precos || {};
+      const models = Object.keys(P).filter((m) => Object.values(P[m]).some((v) => typeof v === "number"));
+      if (!models.length) return;
+      const cols = (tp.servicos || []).filter((s) => models.some((m) => typeof P[m][s.id] === "number"));
+      const h = document.createElement("h3");
+      h.textContent = tp.nomeJa === tp.nome ? tp.nome : tp.nomeJa + " · " + tp.nome;
+      h.style.cssText = "font-size:1rem;margin:16px 0 6px";
+      const box = document.createElement("div"); box.className = "table-scroll";
+      const t = document.createElement("table"); box.appendChild(t);
+      const head = t.createTHead().insertRow();
+      [{ jp: "モデル", pt: "Modelo" }, ...cols].forEach((c) => {
+        const th = document.createElement("th"); th.textContent = c.jp; th.title = c.pt; head.appendChild(th);
+      });
+      const body = t.createTBody();
+      models.forEach((m) => {
+        const r = body.insertRow();
+        r.insertCell().textContent = m;
+        cols.forEach((c) => {
+          const v = P[m][c.id], td = r.insertCell();
+          td.className = "num";
+          td.textContent = typeof v === "number" ? "¥" + v.toLocaleString("ja-JP") : "—";
+        });
+      });
+      wrap.append(h, box);
     });
-  });
-  document.getElementById("precos").classList.remove("hidden");
+    if (wrap.children.length) document.getElementById("precos").classList.remove("hidden");
+  }).catch(() => {});
 })();
 </script>
 </body>
