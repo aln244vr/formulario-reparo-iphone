@@ -71,7 +71,8 @@
     const l = document.createElement("label");
     const c = document.createElement("input");
     c.type = "checkbox"; c.value = s.id; c.checked = (selected || []).includes(s.id);
-    const desc = t(s.djp, s.dpt);
+    const yenTxt = typeof s.preco === "number" ? "¥" + s.preco.toLocaleString("ja-JP") : "";
+    const desc = [t(s.djp, s.dpt), yenTxt].filter(Boolean).join(" · ");
     if (desc) {
       /* com descrição: vira um cartão com nome e explicação curta */
       l.className = "svc-card";
@@ -117,7 +118,11 @@
     const box = $("estimate"), sel = checked();
     const table = ((tipo && TIPOS[tipo].precos) || {})[model.value] || {};
     let total = 0, unknown = false;
-    sel.forEach((id) => { const v = table[id]; if (typeof v === "number") total += v; else unknown = true; });
+    sel.forEach((id) => {
+      let v = table[id];
+      if (typeof v !== "number") { const sv = servicos().find((x) => x.id === id); if (sv && typeof sv.preco === "number") v = sv.preco; } // valor do serviço (vindo do caixa)
+      if (typeof v === "number") total += v; else unknown = true;
+    });
     if (!sel.length || !total) { box.classList.add("hidden"); return; }
     $("estimate-value").textContent = yen(total) + (unknown ? " 〜" : "");
     box.classList.remove("hidden");
