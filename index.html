@@ -1,227 +1,125 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="ja" data-lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>修理依頼フォーム | Yūsō Shūri</title>
-  <meta name="description" content="iPhone郵送修理の依頼フォーム — Formulário de reparo de iPhone por correio.">
+  <title>修理依頼 | Yūsō Shūri</title>
+  <meta name="description" content="iPhone・ゲーム機の郵送修理 — Reparo de iPhone e consoles por correio.">
   <meta name="theme-color" content="#1e3a8a">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
+  <script>
+    // Idioma: escolha salva > idioma do celular (português -> pt, resto -> japonês)
+    (function () {
+      let l = null;
+      try { l = localStorage.getItem("yuso-shuri-lang"); } catch (_) {}
+      if (!l) l = /^pt/i.test(navigator.language || "") ? "pt" : "ja";
+      document.documentElement.dataset.lang = l;
+      document.documentElement.lang = l;
+    })();
+  </script>
 </head>
 <body>
 
-<header class="top">
+<header class="top slim">
+  <div class="lang-toggle" role="group" aria-label="Idioma / 言語">
+    <button type="button" data-set-lang="ja">日本語</button>
+    <button type="button" data-set-lang="pt">Português</button>
+  </div>
   <div class="brand">YŪSŌ SHŪRI · 郵送修理</div>
-  <h1>iPhone 修理依頼フォーム</h1>
-  <p>Formulário de reparo de iPhone por correio</p>
-  <nav class="nav">
-    <a href="guia.html">📦 送り方 · Como enviar</a>
-    <a href="guia.html#faq">❓ よくある質問 · FAQ</a>
-    <a href="consoles.html">🎮 ゲーム機 · Consoles</a>
-    <a href="guia.html#precos" id="nav-precos" class="hidden">💴 料金 · Preços</a>
-  </nav>
+  <h1><span lang="ja">修理のご依頼</span><span lang="pt">Pedir reparo</span></h1>
 </header>
 
 <main class="wrap">
-
-  <div class="card lift">
-    <div class="steps">
-      <div><b>1</b>フォーム送信<br>Enviar formulário</div>
-      <div><b>2</b>メールで案内<br>Instruções por e-mail</div>
-      <div><b>3</b>iPhoneを発送<br>Enviar o iPhone</div>
-      <div><b>4</b>修理・返送<br>Reparo e devolução</div>
-    </div>
-  </div>
-
-  <form id="repairForm" action="https://formsubmit.co/anovammtech@gmail.com" method="POST" enctype="multipart/form-data" novalidate>
-    <!-- Configuração do FormSubmit -->
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_template" value="table">
-    <input type="hidden" name="_subject" value="NOVO PEDIDO DE REPARO - iPhone por Correio">
-    <input type="hidden" name="_next" id="next-url" value="">
-    <input type="hidden" name="_autoresponse" value="修理のご依頼ありがとうございます。内容を確認のうえ、24時間以内に発送方法をご案内します。 / Obrigado pelo seu pedido! Em até 24 horas enviaremos as instruções de envio.">
-    <!-- Anti-spam: campo invisível que robôs preenchem -->
+  <form id="repairForm" class="card lift" novalidate>
     <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-    <!-- Preenchidos pelo JavaScript -->
-    <input type="hidden" name="Servicos Desejados" id="h-servicos">
-    <input type="hidden" name="Sintomas" id="h-sintomas">
-    <input type="hidden" name="Estimativa Mostrada" id="h-estimativa">
 
-    <!-- 1. CLIENTE -->
-    <section class="card">
-      <h2>1. お客様情報 <small>· Seus dados</small></h2>
+    <!-- Aparelho -->
+    <div class="field">
+      <span class="label"><span lang="ja">修理するもの</span><span lang="pt">O que vai consertar?</span></span>
+      <div class="seg" id="tipo">
+        <button type="button" data-tipo="iphone"><span class="ico">📱</span>iPhone</button>
+        <button type="button" data-tipo="console"><span class="ico">🎮</span><span lang="ja">ゲーム機</span><span lang="pt">Console</span></button>
+        <button type="button" data-tipo="controle"><span class="ico">🕹️</span><span lang="ja">コントローラー</span><span lang="pt">Controle</span></button>
+      </div>
+      <div class="msg err hidden" id="tipo-msg"><span lang="ja">選んでください</span><span lang="pt">Escolha uma opção</span></div>
+    </div>
 
+    <div id="detalhes" class="hidden">
       <div class="field">
-        <label for="name">お名前 · Nome completo <span class="req">*</span></label>
-        <input type="text" id="name" name="Nome" placeholder="例: 山田 太郎 / Yamada Tarou" autocomplete="name" required>
+        <label for="model"><span lang="ja">機種</span><span lang="pt">Modelo</span></label>
+        <select id="model" required></select>
+      </div>
+
+      <div class="field hidden" id="other-model-wrap">
+        <input type="text" id="other-model" data-ph-ja="機種名を入力" data-ph-pt="Digite o modelo">
       </div>
 
       <div class="field">
-        <label for="phone">電話番号 · Telefone <span class="req">*</span></label>
-        <input type="tel" id="phone" name="Telefone" placeholder="09012345678" inputmode="numeric" autocomplete="tel" maxlength="11" data-digits required>
-        <div class="hint">ハイフンなし 10〜11桁 · Só números, 10 ou 11 dígitos</div>
+        <span class="label"><span lang="ja">修理内容</span><span lang="pt">Serviço</span></span>
+        <div class="chips" id="services"></div>
+        <div class="msg err hidden" id="services-msg"><span lang="ja">1つ以上選んでください</span><span lang="pt">Escolha pelo menos um</span></div>
       </div>
 
-      <div class="field">
-        <label for="email">メールアドレス · E-mail <span class="req">*</span></label>
-        <input type="email" id="email" name="email" placeholder="seuemail@gmail.com" autocomplete="email" inputmode="email" required>
-        <div class="hint" id="email-suggest"></div>
-      </div>
-
-      <div class="field">
-        <label for="line">LINE ID <span class="hint">(任意 · opcional)</span></label>
-        <input type="text" id="line" name="LINE ID" placeholder="LINEで連絡を希望する場合 · se preferir contato pelo LINE">
-      </div>
-    </section>
-
-    <!-- 2. ENDEREÇO -->
-    <section class="card">
-      <h2>2. 返送先 <small>· Endereço para devolução</small></h2>
-
-      <div class="field">
-        <label for="zip">郵便番号 · CEP (〒) <span class="req">*</span></label>
-        <div class="row">
-          <input type="tel" id="zip" name="CEP" placeholder="4450000" inputmode="numeric" maxlength="8" autocomplete="postal-code" required>
-          <button type="button" class="btn btn-ghost shrink" id="zip-btn">住所検索 · Buscar</button>
+      <div class="box box-info hidden" id="estimate" style="margin-bottom:16px">
+        <div class="estimate">
+          <span><span lang="ja">目安料金</span><span lang="pt">Estimativa</span></span>
+          <strong id="estimate-value"></strong>
         </div>
+      </div>
+
+      <div class="field">
+        <label for="problem"><span lang="ja">症状</span><span lang="pt">O que aconteceu?</span> <span class="hint">(<span lang="ja">任意</span><span lang="pt">opcional</span>)</span></label>
+        <textarea id="problem" rows="3" data-ph-ja="例: 落としてから画面がつかない" data-ph-pt="Ex.: Caiu e a tela não acende"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label for="name"><span lang="ja">お名前</span><span lang="pt">Nome</span></label>
+        <input type="text" id="name" autocomplete="name" required>
+      </div>
+
+      <div class="row stack-sm">
+        <div class="field">
+          <label for="phone"><span lang="ja">電話番号</span><span lang="pt">Telefone</span></label>
+          <input type="tel" id="phone" inputmode="numeric" autocomplete="tel" maxlength="11" placeholder="09012345678" data-digits required>
+        </div>
+        <div class="field">
+          <label for="email"><span lang="ja">メール</span><span lang="pt">E-mail</span></label>
+          <input type="email" id="email" inputmode="email" autocomplete="email" required>
+          <div class="hint" id="email-suggest"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="zip"><span lang="ja">返送先の郵便番号</span><span lang="pt">CEP para devolução (〒)</span></label>
+        <input type="tel" id="zip" inputmode="numeric" maxlength="8" autocomplete="postal-code" placeholder="4450000" required>
         <div class="msg" id="zip-msg"></div>
       </div>
 
       <div class="field">
-        <label for="address">住所 · Endereço <span class="req">*</span></label>
-        <input type="text" id="address" name="Endereco" placeholder="愛知県西尾市…" autocomplete="street-address" required>
-        <div class="hint">郵便番号を入れると自動入力されます · Preenchido automaticamente pelo CEP</div>
+        <label for="address"><span lang="ja">住所（番地・部屋番号まで）</span><span lang="pt">Endereço (com número e apto)</span></label>
+        <input type="text" id="address" autocomplete="street-address" required>
       </div>
-
-      <div class="field">
-        <label for="address2">番地・建物名・部屋番号 · Número, prédio, apto <span class="req">*</span></label>
-        <input type="text" id="address2" name="Numero e Complemento" placeholder="例: 1-2-3 ○○マンション 101" required>
-      </div>
-    </section>
-
-    <!-- 3. APARELHO E REPARO -->
-    <section class="card">
-      <h2>3. 修理内容 <small>· Aparelho e reparo</small></h2>
-
-      <div class="field">
-        <label for="series-select">シリーズ · Série do iPhone <span class="req">*</span></label>
-        <select id="series-select" required>
-          <option value="" disabled selected>選択してください · Selecione</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="model-select">モデル · Modelo exato <span class="req">*</span></label>
-        <select id="model-select" name="Modelo do iPhone" disabled required>
-          <option value="" disabled selected>先にシリーズを選択 · Escolha a série primeiro</option>
-        </select>
-        <div class="hint">設定 › 一般 › 情報 で確認できます · Veja em Ajustes › Geral › Sobre</div>
-      </div>
-
-      <div class="field hidden" id="other-model-wrap">
-        <label for="other-model">モデル名 · Nome do modelo <span class="req">*</span></label>
-        <input type="text" id="other-model" name="Modelo (digitado)" placeholder="例: iPhone 17e">
-      </div>
-
-      <div class="field">
-        <span class="label">ご希望の修理 · Serviço desejado <span class="req">*</span></span>
-        <div class="chips" id="services"></div>
-        <div class="hint">複数選択できます · Pode escolher mais de um</div>
-        <div class="msg err hidden" id="services-msg">修理内容を1つ以上選んでください · Escolha pelo menos um serviço</div>
-      </div>
-
-      <div class="box box-info hidden" id="estimate">
-        <div class="estimate">
-          <span>目安料金 · Estimativa</span>
-          <strong id="estimate-value"></strong>
-        </div>
-        <div class="hint" id="estimate-note">税込・診断後に確定 · Com impostos, confirmado após diagnóstico</div>
-      </div>
-    </section>
-
-    <!-- 4. PROBLEMA -->
-    <section class="card">
-      <h2>4. 症状 <small>· O que está acontecendo</small></h2>
-
-      <div class="field">
-        <span class="label">当てはまる症状 · Marque o que se aplica</span>
-        <div class="chips" id="symptoms"></div>
-      </div>
-
-      <div class="field">
-        <label for="problem">詳しい内容 · Descreva o problema</label>
-        <textarea id="problem" name="Detalhes do Problema" rows="4" placeholder="Ex.: Caiu no chão semana passada. A câmera traseira treme e o Face ID diz &quot;indisponível&quot;."></textarea>
-      </div>
-
-      <div class="field">
-        <label for="photos">写真 · Fotos do dano <span class="hint">(任意 · opcional, até 3)</span></label>
-        <input type="file" id="photos" name="attachment" accept="image/*" multiple>
-        <div class="msg" id="photos-msg"></div>
-      </div>
-
-      <div class="field">
-        <label for="imei">IMEI <span class="hint">(任意 · opcional)</span></label>
-        <input type="tel" id="imei" name="IMEI" data-digits inputmode="numeric" maxlength="15" placeholder="15桁 · 15 dígitos">
-        <div class="hint">設定 › 一般 › 情報 · ou disque *#06#</div>
-      </div>
-    </section>
-
-    <!-- 5. CONFIRMAÇÃO -->
-    <section class="card">
-      <h2>5. 確認 <small>· Antes de enviar</small></h2>
-
-      <label class="check">
-        <input type="checkbox" name="Backup feito" value="Sim">
-        <span>バックアップを取りました · Fiz backup do iPhone (iCloud ou computador)</span>
-      </label>
-      <label class="check">
-        <input type="checkbox" id="agree" name="Concorda com o guia" value="Sim" required>
-        <span><a href="guia.html" target="_blank">送り方・注意事項</a>を読み、同意します <span class="req">*</span><br>Li o <a href="guia.html" target="_blank">guia de envio</a> e concordo</span>
-      </label>
-      <div class="msg err hidden" id="agree-msg">同意が必要です · É preciso concordar para continuar</div>
 
       <div class="msg err hidden" id="form-msg"></div>
       <div class="box box-warn hidden" id="fallback" style="margin-bottom:12px">
-        メールで送ることもできます · Você também pode mandar o pedido por e-mail:
-        <a class="btn btn-gray" id="fallback-link" href="#" style="display:block;margin-top:8px">✉️ メールで送る · Enviar por e-mail</a>
+        <span lang="ja">メールでも送れます:</span><span lang="pt">Você também pode mandar por e-mail:</span>
+        <a class="btn btn-gray" id="fallback-link" href="#" style="display:block;margin-top:8px">✉️ <span lang="ja">メールで送る</span><span lang="pt">Enviar por e-mail</span></a>
       </div>
-      <button type="submit" class="btn btn-primary" id="submit-btn">修理を依頼する · Solicitar reparo</button>
-      <p class="hint" style="text-align:center">送信後、確認メールが届きます · Você receberá um e-mail de confirmação</p>
-    </section>
+
+      <button type="submit" class="btn btn-primary" id="submit-btn"><span lang="ja">依頼する</span><span lang="pt">Enviar pedido</span></button>
+      <p class="fine">
+        <span lang="ja">24時間以内にメールで発送方法をご案内します。<a href="guia.html">送り方・FAQ</a></span>
+        <span lang="pt">Respondemos em até 24 h com as instruções de envio. <a href="guia.html">Como enviar · FAQ</a></span>
+      </p>
+    </div>
   </form>
 </main>
 
-<footer>© Yūsō Shūri · <a href="guia.html">送り方 · Como enviar</a></footer>
-
 <script src="assets/config.js"></script>
-<script>
-  window.FORM = {
-    draftKey: "yuso-shuri-rascunho",
-    services: window.SERVICOS,
-    prices: window.PRECOS,
-    models: {
-      "iPhone 17 / Air / 17 Pro / 17 Pro Max": ["iPhone 17", "iPhone Air", "iPhone 17 Pro", "iPhone 17 Pro Max"],
-      "iPhone 16 / 16e / 16 Plus / 16 Pro / 16 Pro Max": ["iPhone 16", "iPhone 16e", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max"],
-      "iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max": ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"],
-      "iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max": ["iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max"],
-      "iPhone 13 / 13 mini / 13 Pro / 13 Pro Max": ["iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max"],
-      "iPhone 12 / 12 mini / 12 Pro / 12 Pro Max": ["iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max"],
-      "iPhone 11 / 11 Pro / 11 Pro Max": ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max"],
-      "iPhone XS / XR / X": ["iPhone XS", "iPhone XS Max", "iPhone XR", "iPhone X"],
-      "iPhone SE": ["iPhone SE (第3世代 · 3ª geração)", "iPhone SE (第2世代 · 2ª geração)", "iPhone SE (第1世代 · 1ª geração)"],
-      "iPhone 8 以前 · 8 ou anterior": ["iPhone 8", "iPhone 8 Plus", "iPhone 7", "iPhone 7 Plus", "iPhone 6s / 6s Plus ou anterior"],
-    },
-    symptoms: [
-      "画面割れ · Tela trincada", "タッチ不良 · Toque falhando", "画面が映らない · Tela preta",
-      "電池の減りが早い · Bateria acaba rápido", "充電できない · Não carrega", "電源が入らない · Não liga",
-      "カメラが揺れる・ピンボケ · Câmera treme / sem foco", "カメラが黒い · Câmera preta",
-      "Face IDが使えない · Face ID não funciona", "水没 · Molhou", "落下 · Caiu",
-      "音が出ない · Sem som", "マイク不良 · Microfone ruim", "熱くなる · Esquenta",
-    ],
-  };
-</script>
 <script src="assets/form.js"></script>
 </body>
 </html>

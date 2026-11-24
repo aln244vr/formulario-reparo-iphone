@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="ja" data-lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,57 +7,42 @@
   <meta name="theme-color" content="#1e3a8a">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
+  <script>
+    (function () {
+      let l = null;
+      try { l = localStorage.getItem("yuso-shuri-lang"); } catch (_) {}
+      if (!l) l = /^pt/i.test(navigator.language || "") ? "pt" : "ja";
+      document.documentElement.dataset.lang = document.documentElement.lang = l;
+    })();
+  </script>
 </head>
 <body>
 
-<header class="top">
+<header class="top slim">
   <div class="brand">YŪSŌ SHŪRI · 郵送修理</div>
-  <h1>✅ 依頼を受け付けました</h1>
-  <p>Pedido recebido! Obrigado.</p>
+  <h1>✅ <span lang="ja">受け付けました</span><span lang="pt">Pedido recebido!</span></h1>
 </header>
 
 <main class="wrap">
   <div class="card lift">
-    <h2>次のステップ <small>· Próximos passos</small></h2>
-    <ol class="guide">
-      <li>
-        <b>📧 メールをご確認ください · Confira seu e-mail</b>
-        <span><span id="prazo">24時間以内 (em até 24 horas)</span>に、発送先の住所と梱包方法をお送りします。迷惑メールフォルダもご確認ください。<br>
-        Vamos mandar o endereço de envio e como embalar. Olhe também a caixa de spam.</span>
-      </li>
-      <li>
-        <b>💾 バックアップ · Faça backup</b>
-        <span>iPhone: 設定 › [お名前] › iCloud › iCloudバックアップ<br>
-        ゲーム機 · Console: クラウド保存かUSBへ · na nuvem ou num pendrive</span>
-      </li>
-      <li>
-        <b>📦 発送の準備 · Prepare o envio</b>
-        <span id="prep">ケース・SIMカード・ディスクなどは外してください。詳しくは<a href="guia.html">送り方ガイド</a>へ。<br>
-        Tire capinha, chip ou disco. Veja o <a href="guia.html">guia de envio</a>.</span>
-      </li>
-    </ol>
+    <p style="margin-top:0">
+      <span lang="ja"><b>24時間以内</b>に、発送先と送り方をメールでお送りします。迷惑メールフォルダもご確認ください。</span>
+      <span lang="pt">Em até <b>24 horas</b> mandamos por e-mail o endereço e como enviar. Confira também o spam.</span>
+    </p>
+    <div class="box box-warn">
+      <span lang="ja">案内メールが届くまで、まだ発送しないでください。</span>
+      <span lang="pt">Ainda não envie o aparelho: espere o nosso e-mail.</span>
+    </div>
+    <p class="fine" style="text-align:left;margin-top:14px">
+      <span lang="ja">写真があれば、案内メールに返信して送ってください。</span>
+      <span lang="pt">Se tiver fotos do problema, mande respondendo ao nosso e-mail.</span>
+    </p>
   </div>
 
-  <div class="card box-warn" style="box-shadow:none">
-    <b>まだ発送しないでください</b> — 案内メールが届いてから発送をお願いします。<br>
-    <b>Ainda não envie o aparelho</b> — espere o nosso e-mail com as instruções.
-  </div>
-
-  <a href="index.html" class="btn btn-gray" style="display:block">フォームに戻る · Voltar ao formulário</a>
+  <a href="guia.html" class="btn btn-gray" style="display:block;margin-bottom:10px"><span lang="ja">送り方・FAQを見る</span><span lang="pt">Ver como enviar · FAQ</span></a>
+  <a href="index.html" class="btn btn-gray" style="display:block"><span lang="ja">トップへ戻る</span><span lang="pt">Voltar ao início</span></a>
 </main>
 
 <footer>© Yūsō Shūri</footer>
-
-<script src="assets/config.js"></script>
-<script>
-  // Pedido enviado: apaga o rascunho salvo no aparelho
-  const r = new URLSearchParams(location.search).get("r") || "yuso-shuri-rascunho";
-  try { if (/^yuso-shuri-rascunho/.test(r)) localStorage.removeItem(r); } catch (_) {}
-  if (r.endsWith("console")) {
-    document.querySelectorAll('a[href="guia.html"]').forEach((a) => a.href = "consoles.html#envio");
-    document.querySelector('a.btn[href="index.html"]').href = "consoles.html";
-  }
-  if (window.LOJA && LOJA.prazoResposta) document.getElementById("prazo").textContent = LOJA.prazoResposta;
-</script>
 </body>
 </html>
