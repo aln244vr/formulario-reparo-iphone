@@ -245,6 +245,15 @@
 
   // ---------- Envio sem sair da página, com erro visível ----------
   const ENVIO = window.ENVIO || {};
+
+  // Web3Forms grátis não aceita anexos: troca o campo de fotos por um aviso
+  if (ENVIO.servico === "web3forms" && ENVIO.web3formsChave) {
+    const photos = $("photos");
+    photos.classList.add("hidden");
+    photos.disabled = true;
+    $("photos-msg").className = "hint";
+    $("photos-msg").textContent = "写真は受付後、返信メールかLINEで送ってください · Mande as fotos depois, respondendo ao nosso e-mail ou pelo LINE";
+  }
   const TIMEOUT_MS = 30000;
 
   function buildRequest() {
@@ -260,7 +269,6 @@
         if (v instanceof File) continue; // plano grátis do Web3Forms não aceita anexos
         out.append(k, v);
       }
-      if (fd.getAll("attachment").some((f) => f && f.size)) out.append("Fotos", "Cliente tem fotos — pedir por e-mail");
       return { url: "https://api.web3forms.com/submit", body: out };
     }
     // FormSubmit (padrão): endpoint AJAX devolve JSON com o resultado
