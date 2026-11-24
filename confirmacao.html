@@ -1,52 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmação de Pedido | Yūsō Shūri</title>
-    <!-- Carrega o Tailwind CSS para estilização moderna e responsiva -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>依頼完了 | Yūsō Shūri</title>
+  <meta name="theme-color" content="#1e3a8a">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
 </head>
-<body class="p-4 sm:p-8 flex items-center justify-center min-h-screen">
+<body>
 
-    <!-- Container da Mensagem de Confirmação -->
-    <div class="max-w-xl mx-auto bg-white p-8 sm:p-10 rounded-xl shadow-2xl text-center">
-        
-        <!-- Ícone de Confirmação (Checkmark) -->
-        <svg class="w-16 h-16 text-blue-600 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
+<header class="top">
+  <div class="brand">YŪSŌ SHŪRI · 郵送修理</div>
+  <h1>✅ 依頼を受け付けました</h1>
+  <p>Pedido recebido! Obrigado.</p>
+</header>
 
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">
-            依頼完了 (Pedido Recebido!)
-        </h1>
-        
-        <p class="text-lg text-gray-700 mb-6">
-            Obrigado por sua solicitação de reparo.
-        </p>
+<main class="wrap">
+  <div class="card lift">
+    <h2>次のステップ <small>· Próximos passos</small></h2>
+    <ol class="guide">
+      <li>
+        <b>📧 メールをご確認ください · Confira seu e-mail</b>
+        <span><span id="prazo">24時間以内 (em até 24 horas)</span>に、発送先の住所と梱包方法をお送りします。迷惑メールフォルダもご確認ください。<br>
+        Vamos mandar o endereço de envio e como embalar. Olhe também a caixa de spam.</span>
+      </li>
+      <li>
+        <b>💾 バックアップ · Faça backup</b>
+        <span>iPhone: 設定 › [お名前] › iCloud › iCloudバックアップ<br>
+        ゲーム機 · Console: クラウド保存かUSBへ · na nuvem ou num pendrive</span>
+      </li>
+      <li>
+        <b>📦 発送の準備 · Prepare o envio</b>
+        <span id="prep">ケース・SIMカード・ディスクなどは外してください。詳しくは<a href="guia.html">送り方ガイド</a>へ。<br>
+        Tire capinha, chip ou disco. Veja o <a href="guia.html">guia de envio</a>.</span>
+      </li>
+    </ol>
+  </div>
 
-        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-lg mb-8 text-left">
-            <p class="font-semibold text-blue-800 mb-2">Próximos Passos:</p>
-            <ul class="list-disc list-inside text-sm text-blue-700 space-y-1">
-                <li>Sua solicitação será examinada em breve.</li>
-                <li>**Em até 24 horas**, enviaremos um e-mail de confirmação para o endereço que você forneceu.</li>
-                <li>Este e-mail conterá o **endereço de envio**, instruções detalhadas para embalagem e os próximos passos necessários.</li>
-            </ul>
-        </div>
-        
-        <!-- Botão de Voltar -->
-        <!-- O link "index.html" redireciona para a página do formulário -->
-        <a href="index.html" class="inline-block bg-gray-500 text-white font-bold py-3 px-8 rounded-xl hover:bg-gray-600 transition duration-300 shadow-md">
-            フォームに戻る (Voltar à Página Inicial)
-        </a>
-    </div>
+  <div class="card box-warn" style="box-shadow:none">
+    <b>まだ発送しないでください</b> — 案内メールが届いてから発送をお願いします。<br>
+    <b>Ainda não envie o aparelho</b> — espere o nosso e-mail com as instruções.
+  </div>
 
+  <a href="index.html" class="btn btn-gray" style="display:block">フォームに戻る · Voltar ao formulário</a>
+</main>
+
+<footer>© Yūsō Shūri</footer>
+
+<script src="assets/config.js"></script>
+<script>
+  // Pedido enviado: apaga o rascunho salvo no aparelho
+  const r = new URLSearchParams(location.search).get("r") || "yuso-shuri-rascunho";
+  try { if (/^yuso-shuri-rascunho/.test(r)) localStorage.removeItem(r); } catch (_) {}
+  if (r.endsWith("console")) {
+    document.querySelectorAll('a[href="guia.html"]').forEach((a) => a.href = "consoles.html#envio");
+    document.querySelector('a.btn[href="index.html"]').href = "consoles.html";
+  }
+  if (window.LOJA && LOJA.prazoResposta) document.getElementById("prazo").textContent = LOJA.prazoResposta;
+</script>
 </body>
 </html>
