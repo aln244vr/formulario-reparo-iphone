@@ -204,3 +204,46 @@ label.sub { font-weight: 500; font-size: .85rem; color: var(--muted); margin-bot
   border-radius: 12px; padding: 10px 14px; cursor: pointer;
 }
 .custom-panel { flex-basis: 100%; }
+
+/* Serviço com descrição (ex.: Paddles RISE4 · 4 botões traseiros) */
+.chips label.svc-card {
+  flex-basis: 100%; border-radius: 12px; align-items: flex-start; padding: 10px 12px; gap: 10px;
+}
+.chips label.svc-card input { margin-top: 3px; flex: 0 0 auto; }
+.chips label.svc-card span { display: grid; gap: 2px; }
+.chips label.svc-card b { font-weight: 600; font-size: .92rem; }
+.chips label.svc-card small { color: var(--muted); font-size: .8rem; line-height: 1.35; }
+.chips label.svc-card:has(input:checked) small { color: var(--brand-dark); }
+
+/* ===== Formulário em telas ===== */
+.wz-head { display: flex; align-items: center; justify-content: space-between; min-height: 32px; margin-bottom: 10px; }
+.wz-back { border: 0; background: none; color: var(--brand); font: inherit; font-weight: 600; padding: 4px 0; cursor: pointer; }
+.wz-dots { display: flex; gap: 6px; margin-left: auto; }
+.wz-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.wz-dots i.on { background: var(--brand); width: 22px; border-radius: 4px; }
+.wz-title { border: 0; padding: 0; margin: 0 0 14px; font-size: 1.25rem; color: var(--text); }
+.seg-big { grid-template-columns: 1fr; gap: 10px; }
+.seg-big button { display: flex; align-items: center; gap: 14px; padding: 16px; font-size: 1.05rem; text-align: left; }
+.seg-big button .ico { display: inline; font-size: 1.8rem; }
+/* opções dentro do serviço (ex.: Hall Effect / TMR) */
+.svc-opts { flex-basis: 100%; display: grid; gap: 6px; margin: -2px 0 4px 30px; }
+.svc-opts label.opt { display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 11px; cursor: pointer; background: #fff; }
+.svc-opts label.opt input { margin-top: 3px; accent-color: var(--brand); }
+.svc-opts label.opt span { display: grid; gap: 2px; }
+.svc-opts label.opt b { font-size: .9rem; }
+.svc-opts label.opt small { color: var(--muted); font-size: .78rem; line-height: 1.35; }
+.svc-opts label.opt:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); }
+/* modelos em botões */
+.mgrp { margin-bottom: 12px; }
+.mgrp h3 { font-size: .8rem; color: var(--muted); margin: 0 0 6px; text-transform: uppercase; letter-spacing: .04em; }
+.mgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.mgrid button { border: 1.5px solid var(--line); background: #fff; border-radius: 10px; padding: 11px 8px; font: inherit; font-size: .88rem; font-weight: 600; color: var(--text); cursor: pointer; text-align: center; }
+.mgrid button[aria-pressed="true"] { border-color: var(--brand); background: var(--brand-soft); color: var(--brand-dark); }
+.mgrp-more { border: 1px dashed var(--line); border-radius: 10px; padding: 8px 10px; margin-bottom: 12px; }
+.mgrp-more > summary { cursor: pointer; font-weight: 600; color: var(--brand-dark); }
+/* resumo antes de enviar */
+.wz-sum { background: var(--brand-soft); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: .92rem; display: grid; gap: 4px; }
+.wz-sum b { color: var(--brand-dark); }
+.wz-sum button { justify-self: start; border: 0; background: none; color: var(--brand); font: inherit; font-weight: 600; padding: 0; cursor: pointer; font-size: .85rem; }
+#models > button { border: 1.5px dashed var(--line); background: #fff; border-radius: 10px; padding: 11px 8px; font: inherit; font-size: .88rem; font-weight: 600; color: var(--muted); cursor: pointer; }
+#models > button[aria-pressed="true"] { border-color: var(--brand); color: var(--brand-dark); background: var(--brand-soft); }

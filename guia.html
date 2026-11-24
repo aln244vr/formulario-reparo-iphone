@@ -136,6 +136,28 @@
   fetch("assets/catalogo.json", { cache: "no-cache" }).then((r) => r.json()).then((cat) => {
     const wrap = document.getElementById("price-tables");
     Object.values(cat.tipos || {}).forEach((tp) => {
+      /* valores por serviço (enviados do caixa) */
+      /* serviços com opções (ex.: Hall Effect / TMR) viram uma linha por opção */
+      const fixos = [];
+      (tp.servicos || []).forEach((s) => {
+        if (Array.isArray(s.opcoes) && s.opcoes.length) s.opcoes.forEach((o) => { if (typeof o.preco === "number") fixos.push({ pt: s.pt + " · " + o.pt, jp: s.jp + " · " + o.jp, dpt: o.dpt, preco: o.preco }); });
+        else if (typeof s.preco === "number") fixos.push(s);
+      });
+      if (fixos.length) {
+        const h0 = document.createElement("h3");
+        h0.textContent = tp.nomeJa === tp.nome ? tp.nome : tp.nomeJa + " · " + tp.nome;
+        h0.style.cssText = "font-size:1rem;margin:16px 0 6px";
+        const t0 = document.createElement("table"), b0 = t0.createTBody();
+        fixos.forEach((s) => {
+          const r = b0.insertRow(), c = r.insertCell();
+          const nm = document.createElement("div"); nm.textContent = s.jp && s.jp !== s.pt ? s.jp + " · " + s.pt : s.pt;
+          c.append(nm);
+          if (s.dpt) { const d = document.createElement("small"); d.style.color = "var(--muted)"; d.textContent = s.dpt; c.append(d); }
+          const v = r.insertCell(); v.className = "num"; v.textContent = "¥" + s.preco.toLocaleString("ja-JP");
+        });
+        const box0 = document.createElement("div"); box0.className = "table-scroll"; box0.append(t0);
+        wrap.append(h0, box0);
+      }
       const P = tp.precos || {};
       const models = Object.keys(P).filter((m) => Object.values(P[m]).some((v) => typeof v === "number"));
       if (!models.length) return;

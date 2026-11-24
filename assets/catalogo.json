@@ -102,49 +102,65 @@
           "id": "tela",
           "pt": "Troca de Tela (Display)",
           "jp": "画面交換",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Tela trincada, sem imagem ou toque falhando",
+          "djp": "画面割れ・映らない・タッチ不良"
         },
         {
           "id": "bateria",
           "pt": "Troca de Bateria",
           "jp": "バッテリー交換",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Bateria acaba rápido ou saúde da bateria baixa",
+          "djp": "電池の減りが早い・最大容量の低下"
         },
         {
           "id": "traseira",
           "pt": "Troca de Vidro Traseiro",
           "jp": "背面ガラス交換",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Vidro de trás quebrado",
+          "djp": "背面ガラスの割れ"
         },
         {
           "id": "camera",
           "pt": "Reparo da Câmera Traseira",
           "jp": "背面カメラ修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Câmera tremendo, preta ou sem foco",
+          "djp": "カメラが揺れる・映らない・ピントが合わない"
         },
         {
           "id": "faceid",
           "pt": "Reparo do Face ID",
           "jp": "Face ID修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Face ID indisponível ou não reconhece o rosto",
+          "djp": "Face IDが使えない・認識しない"
         },
         {
           "id": "conector",
           "pt": "Conector de Carga",
           "jp": "充電口修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Não carrega ou o cabo fica com mau contato",
+          "djp": "充電できない・ケーブルの接触不良"
         },
         {
           "id": "agua",
           "pt": "Dano por Água",
           "jp": "水没復旧",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Molhou: limpeza interna e diagnóstico",
+          "djp": "水没：内部洗浄と診断"
         },
         {
           "id": "outro",
           "pt": "Diagnóstico / Outro",
           "jp": "診断・その他",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Não sabe o problema? Avaliamos e passamos o orçamento",
+          "djp": "症状が分からない場合は診断してお見積り"
         }
       ],
       "precos": {}
@@ -196,37 +212,49 @@
           "id": "hdmi",
           "pt": "Porta HDMI",
           "jp": "HDMI端子修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Sem imagem na TV, porta HDMI quebrada ou torta",
+          "djp": "テレビに映らない・HDMI端子の破損"
         },
         {
           "id": "limpeza",
           "pt": "Limpeza interna e pasta térmica",
           "jp": "内部清掃・グリス交換",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Console quente ou barulhento: limpeza interna e pasta térmica nova",
+          "djp": "熱い・うるさい：内部清掃とグリス交換"
         },
         {
           "id": "disco",
           "pt": "Leitor de disco",
           "jp": "ディスクドライブ修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Não lê, não aceita ou não solta o disco",
+          "djp": "ディスクを読まない・入らない・出ない"
         },
         {
           "id": "energia",
           "pt": "Fonte / não liga",
           "jp": "電源修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Não liga ou desliga sozinho",
+          "djp": "電源が入らない・勝手に切れる"
         },
         {
           "id": "armazen",
           "pt": "Troca de HD / SSD",
           "jp": "HDD・SSD交換",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Troca ou upgrade de HD/SSD (os dados podem ser apagados)",
+          "djp": "HDD・SSDの交換・増設（データは消える場合あり）"
         },
         {
           "id": "outro",
           "pt": "Diagnóstico / Outro",
           "jp": "診断・その他",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Não sabe o problema? Avaliamos e passamos o orçamento",
+          "djp": "症状が分からない場合は診断してお見積り"
         }
       ],
       "precos": {}
@@ -259,104 +287,150 @@
         {
           "id": "drift",
           "pt": "Analógico (drift)",
-          "jp": "スティック修理",
-          "grupo": "reparo"
+          "jp": "スティック交換（ドリフト）",
+          "grupo": "reparo",
+          "dpt": "Analógico mexendo sozinho? Escolha o tipo de analógico novo",
+          "djp": "勝手に動くスティックを交換。種類を選んでください",
+          "opcoes": [
+            {
+              "id": "hall",
+              "pt": "Hall Effect (padrão)",
+              "jp": "ホールエフェクト（標準）",
+              "dpt": "Analógicos magnéticos: não dão drift. Troca dos 2",
+              "djp": "磁気スティック：ドリフトなし（2本交換）",
+              "preco": 4500,
+              "caixa": "Analógicos Hall effect"
+            },
+            {
+              "id": "tmr",
+              "pt": "TMR K-Silver",
+              "jp": "TMR K-Silver",
+              "dpt": "Magnéticos TMR: sem drift, mais precisos e econômicos na bateria. Troca dos 2",
+              "djp": "TMR磁気スティック：ドリフトなし・高精度・省電力（2本交換）",
+              "preco": 4600,
+              "caixa": "Analógicos TMR K-Silver"
+            }
+          ]
         },
         {
           "id": "botoes",
           "pt": "Botões",
           "jp": "ボタン修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Botão que não responde ou falha",
+          "djp": "反応しない・効きが悪いボタンの修理"
         },
         {
           "id": "gatilhos",
           "pt": "Gatilhos (L2/R2 · LT/RT)",
           "jp": "トリガー修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "L2/R2 ou LT/RT sem resposta ou com mola quebrada",
+          "djp": "トリガーの反応不良・バネの破損"
         },
         {
           "id": "bateriac",
           "pt": "Bateria do controle",
           "jp": "バッテリー交換",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Bateria nova no lugar da original gasta",
+          "djp": "劣化したバッテリーを新品に交換"
         },
         {
           "id": "conectorc",
           "pt": "Conector de carga",
           "jp": "充電端子修理",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Controle não carrega ou o cabo fica com mau contato",
+          "djp": "充電できない・ケーブルの接触不良"
         },
         {
-          "id": "tmr",
-          "pt": "Analógicos TMR K-Silver",
-          "jp": "TMRスティック",
-          "grupo": "custom"
+          "id": "paddles-rise4-preto",
+          "pt": "Paddles RISE4 · preto",
+          "jp": "RISE4 背面パドル（黒）",
+          "grupo": "custom",
+          "dpt": "4 botões traseiros remapeáveis (kit RISE4), grip emborrachado preto",
+          "djp": "背面ボタン4つ（RISE4キット・割り当て変更可）黒ラバーグリップ"
         },
         {
-          "id": "hall",
-          "pt": "Analógicos Hall Effect",
-          "jp": "ホールエフェクトスティック",
-          "grupo": "custom"
-        },
-        {
-          "id": "paddles",
-          "pt": "Paddles traseiros",
-          "jp": "背面パドル追加",
-          "grupo": "custom"
+          "id": "paddles-rise4-branco",
+          "pt": "Paddles RISE4 · branco c/ carcaça",
+          "jp": "RISE4 背面パドル（白・シェル付き）",
+          "grupo": "custom",
+          "dpt": "4 botões traseiros remapeáveis (kit RISE4) + carcaça traseira branca nova",
+          "djp": "背面ボタン4つ（RISE4キット）＋白い背面シェル"
         },
         {
           "id": "capa",
           "pt": "Capa / carcaça personalizada",
           "jp": "シェル交換（カスタム）",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Carcaça nova em outra cor ou estilo",
+          "djp": "シェルを好きなカラー・デザインに交換"
         },
         {
           "id": "botoesc",
           "pt": "Botões personalizados",
           "jp": "カスタムボタン",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Botões coloridos ou transparentes",
+          "djp": "カラー・クリアボタンに交換"
         },
         {
           "id": "dpad",
           "pt": "D-pad personalizado",
           "jp": "十字キー交換",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Direcional novo, em outro estilo ou cor",
+          "djp": "十字キーを交換"
         },
         {
           "id": "clique",
-          "pt": "Gatilhos de clique (estilo mouse)",
-          "jp": "クリックトリガー",
-          "grupo": "custom"
+          "pt": "Kit clique (botões + gatilhos)",
+          "jp": "クリックキット（ボタン＋トリガー）",
+          "grupo": "custom",
+          "dpt": "Botões e gatilhos com clique curto, estilo mouse: resposta mais rápida",
+          "djp": "ボタンとトリガーをマウスのようなクリック式に（反応が速い）"
         },
         {
           "id": "trava",
           "pt": "Trava de gatilho (trigger stop)",
           "jp": "トリガーストップ",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Gatilho com curso curto, para atirar mais rápido",
+          "djp": "トリガーのストロークを短くして素早く反応"
         },
         {
           "id": "led",
           "pt": "LED / iluminação",
           "jp": "LEDカスタム",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Iluminação LED personalizada",
+          "djp": "LEDライトのカスタム"
         },
         {
           "id": "batmaior",
           "pt": "Bateria de maior capacidade",
           "jp": "大容量バッテリー",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Bateria maior: mais horas de jogo por carga",
+          "djp": "大容量バッテリーで長時間プレイ"
         },
         {
           "id": "grip",
           "pt": "Grip / textura antiderrapante",
           "jp": "グリップ加工",
-          "grupo": "custom"
+          "grupo": "custom",
+          "dpt": "Textura antiderrapante nas laterais",
+          "djp": "側面に滑り止め加工"
         },
         {
           "id": "outro",
           "pt": "Diagnóstico / Outro",
           "jp": "診断・その他",
-          "grupo": "reparo"
+          "grupo": "reparo",
+          "dpt": "Não sabe o problema? Avaliamos e passamos o orçamento",
+          "djp": "症状が分からない場合は診断してお見積り"
         }
       ],
       "precos": {}

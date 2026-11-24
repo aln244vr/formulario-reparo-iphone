@@ -18,7 +18,23 @@
       background: #fff; cursor: pointer; font-size: 1rem; color: var(--muted);
     }
     .icon.del { color: var(--err); }
-    .svc { border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+    .svc { border: 1px solid var(--line); border-radius: 12px; padding: 0; margin-bottom: 6px; overflow: hidden; }
+    .svc.open { padding: 0 10px 10px; border-color: var(--brand); }
+    .svc-head { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: #fff; padding: 10px 12px; font: inherit; text-align: left; cursor: pointer; color: var(--text); }
+    .svc.open .svc-head { margin: 0 -10px 8px; width: calc(100% + 20px); background: var(--brand-soft); }
+    .svc-ico { flex: 0 0 auto; }
+    .svc-name { flex: 1; min-width: 0; display: grid; }
+    .svc-name b { font-size: .95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .svc-name small { color: var(--muted); font-size: .8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .svc-arrow { color: var(--muted); }
+    details.sec > summary { list-style: none; cursor: pointer; }
+    details.sec > summary::-webkit-details-marker { display: none; }
+    details.sec > summary h2 { margin: 0; display: flex; justify-content: space-between; align-items: center; }
+    details.sec > summary h2::after { content: "▾"; color: var(--muted); font-size: .9rem; }
+    details.sec[open] > summary h2 { margin-bottom: 14px; }
+    details.sec[open] > summary h2::after { content: "▴"; }
+    .opts { display: grid; gap: 8px; margin: 4px 0 10px; }
+    .opt { border: 1px dashed var(--brand); border-radius: 10px; padding: 8px; background: #fbfcff; }
     .svc .item { margin-bottom: 6px; }
     .svc .item:last-child { margin-bottom: 0; }
     .group { border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 12px; background: #fbfcfe; }
@@ -83,6 +99,15 @@
     </div>
   </section>
 
+  <!-- Receber do caixa -->
+  <section class="card" id="caixa">
+    <h2>📥 Receber do caixa</h2>
+    <p class="hint" style="margin-top:-6px">No Pedidos &amp; caixa, toque em <b>Preços → Enviar para o site</b>. Depois cole aqui e toque em <b>Salvar</b>. Os serviços entram com nome, descrição e valor.</p>
+    <textarea id="caixa-code" rows="2" placeholder="ANOVACAT1:…"></textarea>
+    <div class="row" style="margin-top:8px"><button type="button" class="btn btn-ghost shrink" id="caixa-go">Aplicar</button></div>
+    <div class="msg" id="caixa-msg"></div>
+  </section>
+
   <!-- Tipo -->
   <div class="card">
     <div class="seg" id="tabs">
@@ -93,22 +118,22 @@
   </div>
 
   <div id="editor" class="hidden">
-    <section class="card">
-      <h2>🛠️ Serviços</h2>
-      <p class="hint" style="margin-top:-6px">Nome em português e em japonês. "Personalização" aparece no botão 🎨 do formulário.</p>
+    <details class="card sec" open>
+      <summary><h2>🛠️ Serviços</h2></summary>
+      <p class="hint" style="margin-top:-6px">Nome e descrição curta em português e em japonês (a descrição aparece embaixo do serviço no formulário). "Personalização" aparece no botão 🎨.</p>
       <div id="svc-list"></div>
       <button type="button" class="btn add" id="svc-add">+ Adicionar serviço</button>
-    </section>
+    </details>
 
-    <section class="card">
-      <h2>📋 Modelos</h2>
+    <details class="card sec">
+      <summary><h2>📋 Modelos</h2></summary>
       <p class="hint" style="margin-top:-6px">Organizados por série. O cliente vê nessa ordem.</p>
       <div id="model-list"></div>
       <button type="button" class="btn add" id="group-add">+ Adicionar série</button>
-    </section>
+    </details>
 
-    <section class="card">
-      <h2>💴 Preços</h2>
+    <details class="card sec">
+      <summary><h2>💴 Preços</h2></summary>
       <p class="hint" style="margin-top:-6px">Em ienes, com imposto. Deixe vazio para "sob orçamento". O formulário mostra a estimativa e o guia mostra a tabela.</p>
       <div class="field">
         <select id="price-model"></select>
@@ -117,7 +142,7 @@
       <div class="row" style="margin-top:6px">
         <button type="button" class="btn btn-gray" id="price-copy" style="font-size:.85rem">Copiar estes preços para todos da mesma série</button>
       </div>
-    </section>
+    </details>
   </div>
 
   <p class="fine" id="loading">Carregando catálogo…</p>
@@ -235,34 +260,113 @@
     while (all.has(id)) id = base + "-" + n++;
     return id;
   }
+  // ---------- Receber do caixa (código ANOVACAT1) ----------
+  const CAT2TIPO = { "iPhone": "iphone", "Controle": "controle", "Console": "console" };
+  const norm = (x) => String(x || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const REPARO = /^(troca|reparo|conserto)|drift|bot(a|õ)es$|gatilhos \(|bateria do|conector|diagn|tela|vidro|camera|câmera|face id|agua|água|hdmi|leitor|fonte|hd \/ ssd|limpeza/i;
+  $("caixa-go").addEventListener("click", () => {
+    const out = $("caixa-msg"), raw = $("caixa-code").value;
+    const m = /ANOVACAT1:([A-Za-z0-9_\-\s]+)\./.exec(raw);
+    const fail = (t) => { out.textContent = t; out.className = "msg err"; };
+    if (!cat) return fail("O catálogo ainda está carregando.");
+    if (!m) return fail("Código não reconhecido. No caixa, toque em Preços → Enviar para o site e cole de novo.");
+    let data;
+    try { let b = m[1].replace(/\s+/g, "").replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "="; data = JSON.parse(decodeURIComponent(escape(atob(b)))); }
+    catch (_) { return fail("O código veio incompleto. Copie de novo no caixa."); }
+    let added = 0, updated = 0;
+    (data.s || []).forEach((o) => {
+      const k = CAT2TIPO[o.c]; if (!k || !cat.tipos[k]) return;
+      const t = cat.tipos[k];
+      const base = String(o.n || "").replace(new RegExp("\\s·\\s" + o.c + "$"), "");
+      // nome do caixa ligado a uma opção (ex.: "Analógicos TMR K-Silver" → Analógico (drift) · TMR)
+      let opt = null;
+      t.servicos.forEach((x) => (x.opcoes || []).forEach((op) => { if (!opt && op.caixa && norm(op.caixa) === norm(o.n)) opt = op; }));
+      if (opt) { if (typeof o.v === "number" && o.v > 0) opt.preco = o.v; updated++; return; }
+      let sv = t.servicos.find((x) => norm(x.pt) === norm(o.n) || norm(x.pt) === norm(base));
+      if (!sv) {
+        sv = { id: newId(slug(base)), pt: base, jp: o.j || base, grupo: k === "controle" && !REPARO.test(base) ? "custom" : "reparo" };
+        const outro = t.servicos.findIndex((x) => /^diagn/i.test(x.pt));
+        outro >= 0 ? t.servicos.splice(outro, 0, sv) : t.servicos.push(sv);
+        added++;
+      } else updated++;
+      if (o.j) sv.jp = o.j;
+      if (o.d) sv.dpt = o.d;
+      if (o.dj) sv.djp = o.dj;
+      if (typeof o.v === "number" && o.v > 0) sv.preco = o.v; else delete sv.preco;
+    });
+    if (!added && !updated) return fail("Nenhum serviço de iPhone, Console ou Controle no código.");
+    changed(); selectTab(tab);
+    out.className = "msg ok";
+    out.textContent = `✓ ${added} novo(s) e ${updated} atualizado(s). Confira e toque em 💾 Salvar.`;
+    $("caixa-code").value = "";
+  });
+
+  const openSvc = new Set(); // serviços abertos para editar (os outros ficam numa linha só)
+  const yenTxt = (v) => (typeof v === "number" ? "¥" + v.toLocaleString("ja-JP") : "");
+  function svcSummary(s) {
+    if (Array.isArray(s.opcoes) && s.opcoes.length) return s.opcoes.map((o) => o.pt + (typeof o.preco === "number" ? " " + yenTxt(o.preco) : "")).join(" · ");
+    return typeof s.preco === "number" ? yenTxt(s.preco) : "sem valor";
+  }
+  function numInput(obj, key, ph) {
+    return el("input", { type: "text", inputMode: "numeric", class: "grow", value: typeof obj[key] === "number" ? String(obj[key]) : "", placeholder: ph,
+      oninput: (e) => { const n = parseInt(e.target.value.replace(/[^\d]/g, ""), 10); e.target.value = isNaN(n) ? "" : String(n); if (isNaN(n)) delete obj[key]; else obj[key] = n; changed(); } });
+  }
+  function txtInput(obj, key, ph, after) {
+    return el("input", { type: "text", class: "grow", value: obj[key] || "", placeholder: ph, oninput: (e) => { obj[key] = e.target.value; changed(); if (after) after(); } });
+  }
   function renderServices() {
     const box = $("svc-list"); box.innerHTML = "";
     T().servicos.forEach((s, i, arr) => {
-      const pt = el("input", { type: "text", class: "grow", value: s.pt, placeholder: "Nome em português", oninput: (e) => { s.pt = e.target.value; changed(); renderPrices(); } });
-      const jp = el("input", { type: "text", class: "grow", value: s.jp, placeholder: "日本語の名前", oninput: (e) => { s.jp = e.target.value; changed(); } });
-      const grp = el("select", { class: "grow", onchange: (e) => { s.grupo = e.target.value; changed(); } },
-        el("option", { value: "reparo", textContent: "🔧 Reparo" }), el("option", { value: "custom", textContent: "🎨 Personalização" }));
-      grp.value = s.grupo === "custom" ? "custom" : "reparo";
-      box.append(el("div", { class: "svc" },
-        el("div", { class: "item" }, pt),
-        el("div", { class: "item" }, jp),
-        el("div", { class: "item" }, grp,
-          iconBtn("↑", "Subir", () => { if (move(arr, i, -1)) { changed(); renderServices(); renderPrices(); } }),
-          iconBtn("↓", "Descer", () => { if (move(arr, i, 1)) { changed(); renderServices(); renderPrices(); } }),
-          iconBtn("🗑", "Apagar", () => {
-            if (!confirm(`Apagar o serviço "${s.pt}"?`)) return;
-            arr.splice(i, 1);
-            Object.values(T().precos || {}).forEach((p) => delete p[s.id]);
-            changed(); renderServices(); renderPrices();
-          }, "del"))));
+      const isOpen = openSvc.has(s);
+      const head = el("button", { type: "button", class: "svc-head", onclick: () => { isOpen ? openSvc.delete(s) : openSvc.add(s); renderServices(); } },
+        el("span", { class: "svc-ico", textContent: s.grupo === "custom" ? "🎨" : "🔧" }),
+        el("span", { class: "svc-name" }, el("b", { textContent: s.pt || "(sem nome)" }), el("small", { textContent: svcSummary(s) })),
+        el("span", { class: "svc-arrow", textContent: isOpen ? "▴" : "▾" }));
+      const card = el("div", { class: "svc" + (isOpen ? " open" : "") }, head);
+      if (isOpen) {
+        const grp = el("select", { class: "grow", onchange: (e) => { s.grupo = e.target.value; changed(); renderServices(); } },
+          el("option", { value: "reparo", textContent: "🔧 Reparo" }), el("option", { value: "custom", textContent: "🎨 Personalização" }));
+        grp.value = s.grupo === "custom" ? "custom" : "reparo";
+        card.append(
+          el("div", { class: "item" }, txtInput(s, "pt", "Nome em português", () => { head.querySelector("b").textContent = s.pt; renderPrices(); })),
+          el("div", { class: "item" }, txtInput(s, "jp", "日本語の名前")),
+          el("div", { class: "item" }, txtInput(s, "dpt", "Descrição curta (ex.: 4 botões traseiros)")),
+          el("div", { class: "item" }, txtInput(s, "djp", "説明（日本語）")));
+        if (!(Array.isArray(s.opcoes) && s.opcoes.length)) card.append(el("div", { class: "item" }, numInput(s, "preco", "Valor no site ¥ (vazio = sob orçamento)")));
+        // opções do serviço (ex.: Hall Effect padrão / TMR)
+        const opts = el("div", { class: "opts" });
+        (s.opcoes || []).forEach((o, oi, oarr) => {
+          opts.append(el("div", { class: "opt" },
+            el("div", { class: "item" }, txtInput(o, "pt", "Opção (ex.: TMR K-Silver)"), iconBtn("🗑", "Apagar opção", () => { oarr.splice(oi, 1); if (!oarr.length) delete s.opcoes; changed(); renderServices(); }, "del")),
+            el("div", { class: "item" }, txtInput(o, "jp", "日本語")),
+            el("div", { class: "item" }, txtInput(o, "dpt", "Descrição da opção")),
+            el("div", { class: "item" }, txtInput(o, "djp", "説明（日本語）")),
+            el("div", { class: "item" }, numInput(o, "preco", "Valor ¥"), txtInput(o, "caixa", "Nome no caixa"))));
+        });
+        opts.append(el("button", { type: "button", class: "btn add", textContent: "+ Opção (ex.: tipo de peça)", style: "padding:7px;font-size:.85rem",
+          onclick: () => { s.opcoes = s.opcoes || []; s.opcoes.push({ id: newOptId(s), pt: "", jp: "" }); if (s.opcoes.length === 1) delete s.preco; changed(); renderServices(); } }));
+        card.append(opts,
+          el("div", { class: "item" }, grp,
+            iconBtn("↑", "Subir", () => { if (move(arr, i, -1)) { changed(); renderServices(); renderPrices(); } }),
+            iconBtn("↓", "Descer", () => { if (move(arr, i, 1)) { changed(); renderServices(); renderPrices(); } }),
+            iconBtn("🗑", "Apagar", () => {
+              if (!confirm(`Apagar o serviço "${s.pt}"?`)) return;
+              arr.splice(i, 1);
+              Object.values(T().precos || {}).forEach((p) => delete p[s.id]);
+              changed(); renderServices(); renderPrices();
+            }, "del")));
+      }
+      box.append(card);
     });
   }
+  function newOptId(s) { const ids = new Set((s.opcoes || []).map((o) => o.id)); let n = (s.opcoes || []).length + 1; while (ids.has("op" + n)) n++; return "op" + n; }
   $("svc-add").addEventListener("click", () => {
     const pt = prompt("Nome do serviço em português:");
     if (!pt || !pt.trim()) return;
     const jp = prompt("Nome em japonês (pode deixar vazio e preencher depois):") || "";
     const custom = tab === "controle" && confirm("É uma personalização? (OK = Personalização, Cancelar = Reparo)");
     T().servicos.push({ id: newId(slug(pt)), pt: pt.trim(), jp: jp.trim() || pt.trim(), grupo: custom ? "custom" : "reparo" });
+    openSvc.add(T().servicos[T().servicos.length - 1]);
     changed(); renderServices(); renderPrices();
     $("svc-list").lastElementChild.scrollIntoView({ behavior: "smooth", block: "center" });
   });
