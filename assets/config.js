@@ -41,3 +41,28 @@ window.SERVICOS = [
 window.PRECOS = {
   // "iPhone 12 Pro Max": { tela: null, bateria: null, camera: null },
 };
+
+/* ============================================================
+ *  CONSOLES E CONTROLES (consoles.html)
+ *  tipo: "console" ou "controle" — o formulário mostra só os
+ *  serviços que combinam com o aparelho escolhido.
+ * ============================================================ */
+window.CONSOLE_SERVICOS = [
+  { id: "hdmi",      tipo: "console",  jp: "HDMI端子修理",           pt: "Porta HDMI" },
+  { id: "limpeza",   tipo: "console",  jp: "内部清掃・グリス交換",   pt: "Limpeza interna e pasta térmica" },
+  { id: "disco",     tipo: "console",  jp: "ディスクドライブ修理",   pt: "Leitor de disco" },
+  { id: "energia",   tipo: "console",  jp: "電源修理",               pt: "Fonte / não liga" },
+  { id: "armazen",   tipo: "console",  jp: "HDD・SSD交換",           pt: "Troca de HD / SSD" },
+  { id: "drift",     tipo: "controle", jp: "スティック修理",         pt: "Analógico (drift)" },
+  { id: "botoes",    tipo: "controle", jp: "ボタン修理",             pt: "Botões" },
+  { id: "gatilhos",  tipo: "controle", jp: "トリガー修理",           pt: "Gatilhos (L2/R2 · LT/RT)" },
+  { id: "bateriac",  tipo: "controle", jp: "バッテリー交換",         pt: "Bateria do controle" },
+  { id: "conectorc", tipo: "controle", jp: "充電端子修理",           pt: "Conector de carga" },
+  { id: "outro",                       jp: "診断・その他",           pt: "Diagnóstico / Outro" },
+];
+
+// Mesmo formato de PRECOS. O nome do modelo precisa ser igual ao da lista em consoles.html.
+// Ex.: "PS5 (CFI-1000〜1200) ディスク · com disco": { hdmi: 9800, limpeza: 6800 },
+//      "DualSense (PS5)": { drift: 3800 },
+window.CONSOLE_PRECOS = {
+};

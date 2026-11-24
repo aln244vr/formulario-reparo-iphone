@@ -19,6 +19,7 @@
   <nav class="nav">
     <a href="guia.html">📦 送り方 · Como enviar</a>
     <a href="guia.html#faq">❓ よくある質問 · FAQ</a>
+    <a href="consoles.html">🎮 ゲーム機 · Consoles</a>
     <a href="guia.html#precos" id="nav-precos" class="hidden">💴 料金 · Preços</a>
   </nav>
 </header>
@@ -59,7 +60,7 @@
 
       <div class="field">
         <label for="phone">電話番号 · Telefone <span class="req">*</span></label>
-        <input type="tel" id="phone" name="Telefone" placeholder="09012345678" inputmode="numeric" autocomplete="tel" maxlength="11" required>
+        <input type="tel" id="phone" name="Telefone" placeholder="09012345678" inputmode="numeric" autocomplete="tel" maxlength="11" data-digits required>
         <div class="hint">ハイフンなし 10〜11桁 · Só números, 10 ou 11 dígitos</div>
       </div>
 
@@ -162,7 +163,7 @@
 
       <div class="field">
         <label for="imei">IMEI <span class="hint">(任意 · opcional)</span></label>
-        <input type="tel" id="imei" name="IMEI" inputmode="numeric" maxlength="15" placeholder="15桁 · 15 dígitos">
+        <input type="tel" id="imei" name="IMEI" data-digits inputmode="numeric" maxlength="15" placeholder="15桁 · 15 dígitos">
         <div class="hint">設定 › 一般 › 情報 · ou disque *#06#</div>
       </div>
     </section>
@@ -192,243 +193,31 @@
 
 <script src="assets/config.js"></script>
 <script>
-(function () {
-  "use strict";
-  const $ = (id) => document.getElementById(id);
-
-  // ---------- Modelos ----------
-  const OUTRO = "その他・わからない · Outro / Não sei";
-  const iphoneModels = {
-    "iPhone 17 / Air / 17 Pro / 17 Pro Max": ["iPhone 17", "iPhone Air", "iPhone 17 Pro", "iPhone 17 Pro Max"],
-    "iPhone 16 / 16e / 16 Plus / 16 Pro / 16 Pro Max": ["iPhone 16", "iPhone 16e", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max"],
-    "iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max": ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"],
-    "iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max": ["iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max"],
-    "iPhone 13 / 13 mini / 13 Pro / 13 Pro Max": ["iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max"],
-    "iPhone 12 / 12 mini / 12 Pro / 12 Pro Max": ["iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max"],
-    "iPhone 11 / 11 Pro / 11 Pro Max": ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max"],
-    "iPhone XS / XR / X": ["iPhone XS", "iPhone XS Max", "iPhone XR", "iPhone X"],
-    "iPhone SE": ["iPhone SE (第3世代 · 3ª geração)", "iPhone SE (第2世代 · 2ª geração)", "iPhone SE (第1世代 · 1ª geração)"],
-    "iPhone 8 以前 · 8 ou anterior": ["iPhone 8", "iPhone 8 Plus", "iPhone 7", "iPhone 7 Plus", "iPhone 6s / 6s Plus ou anterior"],
+  window.FORM = {
+    draftKey: "yuso-shuri-rascunho",
+    services: window.SERVICOS,
+    prices: window.PRECOS,
+    models: {
+      "iPhone 17 / Air / 17 Pro / 17 Pro Max": ["iPhone 17", "iPhone Air", "iPhone 17 Pro", "iPhone 17 Pro Max"],
+      "iPhone 16 / 16e / 16 Plus / 16 Pro / 16 Pro Max": ["iPhone 16", "iPhone 16e", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max"],
+      "iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max": ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"],
+      "iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max": ["iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max"],
+      "iPhone 13 / 13 mini / 13 Pro / 13 Pro Max": ["iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max"],
+      "iPhone 12 / 12 mini / 12 Pro / 12 Pro Max": ["iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max"],
+      "iPhone 11 / 11 Pro / 11 Pro Max": ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max"],
+      "iPhone XS / XR / X": ["iPhone XS", "iPhone XS Max", "iPhone XR", "iPhone X"],
+      "iPhone SE": ["iPhone SE (第3世代 · 3ª geração)", "iPhone SE (第2世代 · 2ª geração)", "iPhone SE (第1世代 · 1ª geração)"],
+      "iPhone 8 以前 · 8 ou anterior": ["iPhone 8", "iPhone 8 Plus", "iPhone 7", "iPhone 7 Plus", "iPhone 6s / 6s Plus ou anterior"],
+    },
+    symptoms: [
+      "画面割れ · Tela trincada", "タッチ不良 · Toque falhando", "画面が映らない · Tela preta",
+      "電池の減りが早い · Bateria acaba rápido", "充電できない · Não carrega", "電源が入らない · Não liga",
+      "カメラが揺れる・ピンボケ · Câmera treme / sem foco", "カメラが黒い · Câmera preta",
+      "Face IDが使えない · Face ID não funciona", "水没 · Molhou", "落下 · Caiu",
+      "音が出ない · Sem som", "マイク不良 · Microfone ruim", "熱くなる · Esquenta",
+    ],
   };
-  iphoneModels[OUTRO] = [OUTRO];
-
-  const series = $("series-select"), model = $("model-select");
-  Object.keys(iphoneModels).forEach((s) => series.add(new Option(s, s)));
-
-  function fillModels() {
-    const list = iphoneModels[series.value] || [];
-    model.innerHTML = "";
-    model.add(new Option("選択してください · Selecione", ""));
-    model.options[0].disabled = true;
-    list.forEach((m) => model.add(new Option(m, m)));
-    model.disabled = !list.length;
-    model.value = list.length === 1 ? list[0] : "";
-    onModelChange();
-  }
-  function onModelChange() {
-    const other = model.value === OUTRO;
-    $("other-model-wrap").classList.toggle("hidden", !other);
-    $("other-model").required = other;
-    updateEstimate();
-  }
-  series.addEventListener("change", fillModels);
-  model.addEventListener("change", onModelChange);
-
-  // ---------- Serviços e sintomas (chips) ----------
-  const SERVICOS = window.SERVICOS || [];
-  const PRECOS = window.PRECOS || {};
-  const SINTOMAS = [
-    "画面割れ · Tela trincada", "タッチ不良 · Toque falhando", "画面が映らない · Tela preta",
-    "電池の減りが早い · Bateria acaba rápido", "充電できない · Não carrega", "電源が入らない · Não liga",
-    "カメラが揺れる・ピンボケ · Câmera treme / sem foco", "カメラが黒い · Câmera preta",
-    "Face IDが使えない · Face ID não funciona", "水没 · Molhou", "落下 · Caiu",
-    "音が出ない · Sem som", "マイク不良 · Microfone ruim", "熱くなる · Esquenta",
-  ];
-
-  function chips(containerId, items, valueOf, labelOf) {
-    const box = $(containerId);
-    items.forEach((it) => {
-      const l = document.createElement("label");
-      const c = document.createElement("input");
-      c.type = "checkbox"; c.value = valueOf(it);
-      l.append(c, document.createTextNode(labelOf(it)));
-      box.appendChild(l);
-    });
-    box.addEventListener("change", () => { syncHidden(); updateEstimate(); saveDraft(); });
-  }
-  chips("services", SERVICOS, (s) => s.id, (s) => s.jp + " · " + s.pt);
-  chips("symptoms", SINTOMAS, (s) => s, (s) => s);
-
-  const checked = (id) => [...$(id).querySelectorAll("input:checked")].map((c) => c.value);
-  const serviceName = (id) => { const s = SERVICOS.find((x) => x.id === id); return s ? s.pt + " (" + s.jp + ")" : id; };
-
-  function syncHidden() {
-    $("h-servicos").value = checked("services").map(serviceName).join(", ");
-    $("h-sintomas").value = checked("symptoms").join(", ");
-    if (checked("services").length) $("services-msg").classList.add("hidden");
-  }
-
-  // ---------- Estimativa ----------
-  const yen = (n) => "¥" + n.toLocaleString("ja-JP");
-  const hasPrices = Object.values(PRECOS).some((m) => Object.values(m).some((v) => typeof v === "number"));
-  if (hasPrices) $("nav-precos").classList.remove("hidden");
-
-  function updateEstimate() {
-    const sel = checked("services");
-    const box = $("estimate");
-    if (!sel.length || !model.value) { box.classList.add("hidden"); $("h-estimativa").value = ""; return; }
-    const table = PRECOS[model.value] || {};
-    let total = 0, unknown = false;
-    sel.forEach((id) => { const v = table[id]; if (typeof v === "number") total += v; else unknown = true; });
-    let text;
-    if (!hasPrices || total === 0) text = "お見積り後にご連絡 · Orçamento por e-mail";
-    else if (unknown) text = yen(total) + " 〜 (+要見積り · + orçamento)";
-    else text = yen(total);
-    $("estimate-value").textContent = text;
-    $("estimate-value").classList.toggle("as-text", !hasPrices || total === 0);
-    $("estimate-note").classList.toggle("hidden", !hasPrices || total === 0);
-    $("h-estimativa").value = text;
-    box.classList.remove("hidden");
-  }
-
-  // ---------- Telefone / IMEI: só números ----------
-  ["phone", "imei"].forEach((id) => $(id).addEventListener("input", (e) => {
-    e.target.value = toHalfWidth(e.target.value).replace(/\D/g, "");
-  }));
-  function toHalfWidth(s) { return s.replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xFEE0)); }
-
-  // ---------- Sugestão de e-mail ----------
-  const DOMAINS = ["gmail.com", "yahoo.co.jp", "docomo.ne.jp", "au.com", "ezweb.ne.jp", "softbank.ne.jp", "i.softbank.jp", "icloud.com", "outlook.com", "hotmail.com", "ymobile.ne.jp", "rakuten.jp"];
-  $("email").addEventListener("input", (e) => {
-    const v = e.target.value, at = v.indexOf("@"), out = $("email-suggest");
-    out.innerHTML = "";
-    if (at < 1) return;
-    const typed = v.slice(at + 1).toLowerCase();
-    DOMAINS.filter((d) => d.startsWith(typed) && d !== typed).slice(0, 4).forEach((d) => {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "btn btn-gray"; b.style.cssText = "padding:4px 10px;margin:4px 6px 0 0;font-size:.8rem;font-weight:600";
-      b.textContent = "@" + d;
-      b.onclick = () => { e.target.value = v.slice(0, at + 1) + d; out.innerHTML = ""; saveDraft(); };
-      out.appendChild(b);
-    });
-  });
-
-  // ---------- CEP -> endereço (zipcloud, JSONP) ----------
-  const zip = $("zip"), zipMsg = $("zip-msg");
-  let lastZip = "";
-  zip.addEventListener("input", () => {
-    const d = toHalfWidth(zip.value).replace(/\D/g, "").slice(0, 7);
-    zip.value = d.length > 3 ? d.slice(0, 3) + "-" + d.slice(3) : d;
-    if (d.length === 7 && d !== lastZip) lookupZip(d);
-  });
-  $("zip-btn").addEventListener("click", () => {
-    const d = zip.value.replace(/\D/g, "");
-    if (d.length !== 7) return setZipMsg("7桁で入力してください · Digite 7 números", true);
-    lookupZip(d);
-  });
-  function setZipMsg(t, err) { zipMsg.textContent = t; zipMsg.className = "msg " + (err ? "err" : "ok"); }
-  function lookupZip(d) {
-    lastZip = d;
-    setZipMsg("検索中… · Buscando…", false);
-    const cb = "zipcb_" + Date.now();
-    const s = document.createElement("script");
-    const timer = setTimeout(() => { cleanup(); setZipMsg("検索できませんでした。手入力してください · Não deu para buscar, digite o endereço", true); }, 6000);
-    function cleanup() { clearTimeout(timer); delete window[cb]; s.remove(); }
-    window[cb] = (res) => {
-      cleanup();
-      const r = res && res.results && res.results[0];
-      if (!r) return setZipMsg("見つかりませんでした · CEP não encontrado", true);
-      $("address").value = r.address1 + r.address2 + r.address3;
-      setZipMsg("✓ 住所を入力しました · Endereço preenchido", false);
-      $("address2").focus();
-      saveDraft();
-    };
-    s.src = "https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + d + "&callback=" + cb;
-    s.onerror = () => { cleanup(); setZipMsg("検索できませんでした。手入力してください · Não deu para buscar, digite o endereço", true); };
-    document.body.appendChild(s);
-  }
-
-  // ---------- Fotos ----------
-  const MAX_FILES = 3, MAX_MB = 5;
-  $("photos").addEventListener("change", (e) => {
-    const files = [...e.target.files], msg = $("photos-msg");
-    if (files.length > MAX_FILES) {
-      e.target.value = "";
-      msg.textContent = `最大${MAX_FILES}枚まで · No máximo ${MAX_FILES} fotos`; msg.className = "msg err"; return;
-    }
-    const big = files.find((f) => f.size > MAX_MB * 1024 * 1024);
-    if (big) {
-      e.target.value = "";
-      msg.textContent = `1枚${MAX_MB}MBまで · Cada foto até ${MAX_MB} MB`; msg.className = "msg err"; return;
-    }
-    msg.textContent = files.length ? `✓ ${files.length}枚選択 · ${files.length} foto(s)` : ""; msg.className = "msg ok";
-  });
-
-  // ---------- Rascunho (salvo só neste aparelho) ----------
-  const form = $("repairForm");
-  const DRAFT_KEY = "yuso-shuri-rascunho";
-  const draftFields = ["name", "phone", "email", "line", "zip", "address", "address2", "problem", "imei", "other-model"];
-  function saveDraft() {
-    try {
-      const d = {};
-      draftFields.forEach((id) => (d[id] = $(id).value));
-      d.series = series.value; d.model = model.value;
-      d.services = checked("services"); d.symptoms = checked("symptoms");
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
-    } catch (_) {}
-  }
-  function loadDraft() {
-    try {
-      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-      if (!d) return;
-      draftFields.forEach((id) => { if (d[id]) $(id).value = d[id]; });
-      if (d.series && iphoneModels[d.series]) { series.value = d.series; fillModels(); if (d.model) model.value = d.model; }
-      [["services", d.services], ["symptoms", d.symptoms]].forEach(([box, vals]) =>
-        (vals || []).forEach((v) => { const c = $(box).querySelector(`input[value="${CSS.escape(v)}"]`); if (c) c.checked = true; }));
-      if (d.zip) lastZip = d.zip.replace(/\D/g, "");
-      onModelChange(); syncHidden();
-    } catch (_) {}
-  }
-  form.addEventListener("input", saveDraft);
-  form.addEventListener("change", saveDraft);
-  loadDraft();
-
-  // ---------- Envio ----------
-  $("next-url").value = new URL("confirmacao.html", location.href).href;
-
-  form.addEventListener("submit", (e) => {
-    syncHidden();
-    let ok = true, first = null;
-    const flag = (el) => { ok = false; if (!first) first = el; };
-
-    form.querySelectorAll("[required]").forEach((el) => {
-      el.style.borderColor = "";
-      if (el.type === "checkbox") return;
-      if (!el.value.trim() || !el.checkValidity()) { el.style.borderColor = "var(--err)"; flag(el); }
-    });
-    const phone = $("phone").value;
-    if (phone && (phone.length < 10 || phone.length > 11)) { $("phone").style.borderColor = "var(--err)"; flag($("phone")); }
-    if (!checked("services").length) { $("services-msg").classList.remove("hidden"); flag($("services")); }
-    const agreed = $("agree").checked;
-    $("agree-msg").classList.toggle("hidden", agreed);
-    if (!agreed) flag($("agree"));
-
-    if (!ok) {
-      e.preventDefault();
-      $("form-msg").textContent = "赤い項目を確認してください · Confira os campos destacados";
-      $("form-msg").classList.remove("hidden");
-      first.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    $("form-msg").classList.add("hidden");
-    $("submit-btn").disabled = true;
-    $("submit-btn").textContent = "送信中… · Enviando…";
-    try { sessionStorage.setItem("yuso-shuri-enviado", "1"); } catch (_) {}
-  });
-
-  // Reativa o botão se o cliente voltar para esta página pelo "voltar" do navegador
-  window.addEventListener("pageshow", () => { $("submit-btn").disabled = false; $("submit-btn").textContent = "修理を依頼する · Solicitar reparo"; });
-})();
 </script>
+<script src="assets/form.js"></script>
 </body>
 </html>

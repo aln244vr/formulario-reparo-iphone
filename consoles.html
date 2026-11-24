@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ゲーム機修理依頼 | Yūsō Shūri</title>
+  <meta name="description" content="PS3・PS4・PS5・Xboxとコントローラーの郵送修理 — Reparo de consoles e controles por correio.">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">YŪSŌ SHŪRI · 郵送修理</div>
+  <h1>🎮 ゲーム機・コントローラー修理</h1>
+  <p>Reparo de consoles e controles por correio<br>PS3 · PS4 · PS5 · Xbox</p>
+  <nav class="nav">
+    <a href="index.html">📱 iPhone修理 · iPhone</a>
+    <a href="#envio">📦 送り方 · Como enviar</a>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <div class="card lift">
+    <div class="steps">
+      <div><b>1</b>フォーム送信<br>Enviar formulário</div>
+      <div><b>2</b>メールで案内<br>Instruções por e-mail</div>
+      <div><b>3</b>本体を発送<br>Enviar o aparelho</div>
+      <div><b>4</b>修理・返送<br>Reparo e devolução</div>
+    </div>
+  </div>
+
+  <form id="repairForm" action="https://formsubmit.co/aln244vr@gmail.com" method="POST" enctype="multipart/form-data" novalidate>
+    <!-- Configuração do FormSubmit -->
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_subject" value="NOVO PEDIDO DE REPARO - Console / Controle">
+    <input type="hidden" name="_next" id="next-url" value="">
+    <input type="hidden" name="_autoresponse" value="修理のご依頼ありがとうございます。内容を確認のうえ、24時間以内に発送方法をご案内します。 / Obrigado pelo seu pedido! Em até 24 horas enviaremos as instruções de envio.">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+    <input type="hidden" name="Tipo de Pedido" value="Console / Controle">
+    <input type="hidden" name="Servicos Desejados" id="h-servicos">
+    <input type="hidden" name="Sintomas" id="h-sintomas">
+    <input type="hidden" name="Estimativa Mostrada" id="h-estimativa">
+
+    <!-- 1. CLIENTE -->
+    <section class="card">
+      <h2>1. お客様情報 <small>· Seus dados</small></h2>
+
+      <div class="field">
+        <label for="name">お名前 · Nome completo <span class="req">*</span></label>
+        <input type="text" id="name" name="Nome" placeholder="例: 山田 太郎 / Yamada Tarou" autocomplete="name" required>
+      </div>
+
+      <div class="field">
+        <label for="phone">電話番号 · Telefone <span class="req">*</span></label>
+        <input type="tel" id="phone" name="Telefone" placeholder="09012345678" inputmode="numeric" autocomplete="tel" maxlength="11" data-digits required>
+        <div class="hint">ハイフンなし 10〜11桁 · Só números, 10 ou 11 dígitos</div>
+      </div>
+
+      <div class="field">
+        <label for="email">メールアドレス · E-mail <span class="req">*</span></label>
+        <input type="email" id="email" name="email" placeholder="seuemail@gmail.com" autocomplete="email" inputmode="email" required>
+        <div class="hint" id="email-suggest"></div>
+      </div>
+
+      <div class="field">
+        <label for="line">LINE ID <span class="hint">(任意 · opcional)</span></label>
+        <input type="text" id="line" name="LINE ID" placeholder="LINEで連絡を希望する場合 · se preferir contato pelo LINE">
+      </div>
+    </section>
+
+    <!-- 2. ENDEREÇO -->
+    <section class="card">
+      <h2>2. 返送先 <small>· Endereço para devolução</small></h2>
+
+      <div class="field">
+        <label for="zip">郵便番号 · CEP (〒) <span class="req">*</span></label>
+        <div class="row">
+          <input type="tel" id="zip" name="CEP" placeholder="4450000" inputmode="numeric" maxlength="8" autocomplete="postal-code" required>
+          <button type="button" class="btn btn-ghost shrink" id="zip-btn">住所検索 · Buscar</button>
+        </div>
+        <div class="msg" id="zip-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="address">住所 · Endereço <span class="req">*</span></label>
+        <input type="text" id="address" name="Endereco" placeholder="愛知県西尾市…" autocomplete="street-address" required>
+        <div class="hint">郵便番号を入れると自動入力されます · Preenchido automaticamente pelo CEP</div>
+      </div>
+
+      <div class="field">
+        <label for="address2">番地・建物名・部屋番号 · Número, prédio, apto <span class="req">*</span></label>
+        <input type="text" id="address2" name="Numero e Complemento" placeholder="例: 1-2-3 ○○マンション 101" required>
+      </div>
+    </section>
+
+    <!-- 3. APARELHO E REPARO -->
+    <section class="card">
+      <h2>3. 修理内容 <small>· Aparelho e reparo</small></h2>
+
+      <div class="field">
+        <label for="series-select">機種 · Console ou controle <span class="req">*</span></label>
+        <select id="series-select" required>
+          <option value="" disabled selected>選択してください · Selecione</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="model-select">モデル · Modelo <span class="req">*</span></label>
+        <select id="model-select" name="Modelo" disabled required>
+          <option value="" disabled selected>先に機種を選択 · Escolha o aparelho primeiro</option>
+        </select>
+        <div class="hint">型番は本体の裏・底面のラベルに書いてあります（例: CFI-1200, CUH-2200）<br>O número do modelo fica na etiqueta embaixo ou atrás do console</div>
+      </div>
+
+      <div class="field hidden" id="other-model-wrap">
+        <label for="other-model">モデル名 · Nome do modelo <span class="req">*</span></label>
+        <input type="text" id="other-model" name="Modelo (digitado)" placeholder="例: Nintendo Switch, PS Vita">
+      </div>
+
+      <div class="field">
+        <span class="label">ご希望の修理 · Serviço desejado <span class="req">*</span></span>
+        <div class="chips" id="services"></div>
+        <div class="hint">複数選択できます · Pode escolher mais de um</div>
+        <div class="msg err hidden" id="services-msg">修理内容を1つ以上選んでください · Escolha pelo menos um serviço</div>
+      </div>
+
+      <div class="field">
+        <label for="qty">台数 · Quantidade</label>
+        <select id="qty" name="Quantidade">
+          <option>1</option><option>2</option><option>3</option><option>4+</option>
+        </select>
+        <div class="hint">コントローラー複数台など · Ex.: vários controles</div>
+      </div>
+
+      <div class="box box-info hidden" id="estimate">
+        <div class="estimate">
+          <span>目安料金 · Estimativa</span>
+          <strong id="estimate-value"></strong>
+        </div>
+        <div class="hint" id="estimate-note">1台あたり・税込・診断後に確定 · Por unidade, com impostos, confirmado após diagnóstico</div>
+      </div>
+    </section>
+
+    <!-- 4. PROBLEMA -->
+    <section class="card">
+      <h2>4. 症状 <small>· O que está acontecendo</small></h2>
+
+      <div class="field">
+        <span class="label">当てはまる症状 · Marque o que se aplica</span>
+        <div class="chips" id="symptoms"></div>
+      </div>
+
+      <div class="field">
+        <label for="problem">詳しい内容 · Descreva o problema</label>
+        <textarea id="problem" name="Detalhes do Problema" rows="4" placeholder="Ex.: O PS5 liga, mas a TV fica sem imagem. Começou depois que o cabo HDMI foi puxado."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="error-code">エラーコード · Código de erro <span class="hint">(任意 · opcional)</span></label>
+        <input type="text" id="error-code" name="Codigo de Erro" placeholder="例: CE-108255-1, SU-30746-0">
+      </div>
+
+      <div class="field">
+        <label for="photos">写真・動画のスクショ · Fotos do problema <span class="hint">(任意 · opcional, até 3)</span></label>
+        <input type="file" id="photos" name="attachment" accept="image/*" multiple>
+        <div class="msg" id="photos-msg"></div>
+      </div>
+
+      <div class="field">
+        <label for="serial">シリアル番号 · Número de série <span class="hint">(任意 · opcional)</span></label>
+        <input type="text" id="serial" name="Numero de Serie" placeholder="本体ラベルに記載 · Na etiqueta do aparelho">
+      </div>
+    </section>
+
+    <!-- 5. ENVIO -->
+    <section class="card" id="envio">
+      <h2>5. 発送前の注意 <small>· Antes de enviar</small></h2>
+      <ol class="guide">
+        <li>
+          <b>💾 セーブデータのバックアップ · Backup dos saves</b>
+          <span>PS Plusのクラウド保存やUSBに保存してください。HDD・SSD交換ではデータが消えます。<br>
+          Salve na nuvem (PS Plus / Xbox) ou num pendrive. Troca de HD/SSD apaga tudo.</span>
+        </li>
+        <li>
+          <b>💿 ディスクを取り出す · Tire o disco</b>
+          <span>ディスク、メモリーカード、USB機器は抜いてください。<br>Tire disco, cartões e pendrives.</span>
+        </li>
+        <li>
+          <b>🔌 付属品は不要 · Não mande acessórios</b>
+          <span>ケーブル・スタンド・箱の付属品は、案内がない限り同封しないでください。<br>
+          Cabos, base e acessórios não são necessários, salvo se pedirmos.</span>
+        </li>
+        <li>
+          <b>📦 しっかり梱包 · Embale bem</b>
+          <span>元箱か、緩衝材をたっぷり入れた箱で。本体が箱の中で動かないように。<br>
+          Use a caixa original ou uma caixa com bastante plástico-bolha, sem o console solto.</span>
+        </li>
+        <li>
+          <b>✉️ 案内メールを待つ · Espere nosso e-mail</b>
+          <span>発送先は案内メールでお知らせします。<br>O endereço de envio vai no nosso e-mail.</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 6. CONFIRMAÇÃO -->
+    <section class="card">
+      <h2>6. 確認 <small>· Confirmação</small></h2>
+
+      <label class="check">
+        <input type="checkbox" name="Backup feito" value="Sim">
+        <span>セーブデータのバックアップを取りました · Fiz backup dos meus saves</span>
+      </label>
+      <label class="check">
+        <input type="checkbox" id="agree" name="Concorda com o guia" value="Sim" required>
+        <span><a href="#envio">発送前の注意</a>を読み、同意します <span class="req">*</span><br>Li os <a href="#envio">cuidados antes de enviar</a> e concordo</span>
+      </label>
+      <div class="msg err hidden" id="agree-msg">同意が必要です · É preciso concordar para continuar</div>
+
+      <div class="msg err hidden" id="form-msg"></div>
+      <button type="submit" class="btn btn-primary" id="submit-btn">修理を依頼する · Solicitar reparo</button>
+      <p class="hint" style="text-align:center">送信後、確認メールが届きます · Você receberá um e-mail de confirmação</p>
+    </section>
+  </form>
+</main>
+
+<footer>© Yūsō Shūri · <a href="index.html">iPhone修理 · Reparo de iPhone</a></footer>
+
+<script src="assets/config.js"></script>
+<script>
+  window.FORM = {
+    draftKey: "yuso-shuri-rascunho-console",
+    services: window.CONSOLE_SERVICOS,
+    prices: window.CONSOLE_PRECOS,
+    models: {
+      "PlayStation 5": { tipo: "console", itens: [
+        "PS5 (CFI-1000〜1200) ディスク · com disco", "PS5 (CFI-1000〜1200) デジタル · Digital",
+        "PS5 スリム · Slim (CFI-2000)", "PS5 Pro (CFI-7000)"] },
+      "PlayStation 4": { tipo: "console", itens: [
+        "PS4 (CUH-1000〜1200)", "PS4 Slim (CUH-2000〜2200)", "PS4 Pro (CUH-7000〜7200)"] },
+      "PlayStation 3": { tipo: "console", itens: [
+        "PS3 初期型 · Fat (CECHA〜CECHQ)", "PS3 Slim (CECH-2000〜3000)", "PS3 Super Slim (CECH-4000)"] },
+      "Xbox Series X / S": { tipo: "console", itens: ["Xbox Series X", "Xbox Series S"] },
+      "Xbox One": { tipo: "console", itens: ["Xbox One", "Xbox One S", "Xbox One X"] },
+      "Xbox 360": { tipo: "console", itens: ["Xbox 360", "Xbox 360 S", "Xbox 360 E"] },
+      "🎮 PlayStation コントローラー · Controles": { tipo: "controle", itens: [
+        "DualSense (PS5)", "DualSense Edge (PS5)", "DUALSHOCK 4 (PS4)", "DUALSHOCK 3 (PS3)"] },
+      "🎮 Xbox コントローラー · Controles": { tipo: "controle", itens: [
+        "Xbox Series コントローラー · Controle Xbox Series", "Xbox One コントローラー · Controle Xbox One",
+        "Xbox Elite Series 2", "Xbox 360 コントローラー · Controle Xbox 360"] },
+    },
+    symptoms: [
+      "電源が入らない · Não liga", "勝手に電源が切れる · Desliga sozinho", "熱い・ファンがうるさい · Esquenta / barulho alto",
+      "画面が映らない · Sem imagem", "ディスクを読まない · Não lê disco", "ディスクが出ない · Disco preso",
+      "エラー表示 · Mostra erro", "ライトが点滅 · Luz piscando",
+      "スティックが勝手に動く · Analógico mexe sozinho", "ボタンが反応しない · Botão não funciona",
+      "充電できない · Não carrega", "接続できない · Não conecta", "落下 · Caiu", "水濡れ · Molhou",
+    ],
+  };
+</script>
+<script src="assets/form.js"></script>
+</body>
+</html>

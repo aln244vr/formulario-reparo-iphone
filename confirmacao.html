@@ -27,19 +27,20 @@
       </li>
       <li>
         <b>💾 バックアップ · Faça backup</b>
-        <span>設定 › [お名前] › iCloud › iCloudバックアップ<br>Ajustes › [seu nome] › iCloud › Backup do iCloud</span>
+        <span>iPhone: 設定 › [お名前] › iCloud › iCloudバックアップ<br>
+        ゲーム機 · Console: クラウド保存かUSBへ · na nuvem ou num pendrive</span>
       </li>
       <li>
         <b>📦 発送の準備 · Prepare o envio</b>
-        <span>ケース・SIMカードは外してください。詳しくは<a href="guia.html">送り方ガイド</a>へ。<br>
-        Tire a capinha e o chip. Veja o <a href="guia.html">guia de envio</a>.</span>
+        <span id="prep">ケース・SIMカード・ディスクなどは外してください。詳しくは<a href="guia.html">送り方ガイド</a>へ。<br>
+        Tire capinha, chip ou disco. Veja o <a href="guia.html">guia de envio</a>.</span>
       </li>
     </ol>
   </div>
 
   <div class="card box-warn" style="box-shadow:none">
     <b>まだ発送しないでください</b> — 案内メールが届いてから発送をお願いします。<br>
-    <b>Ainda não envie o iPhone</b> — espere o nosso e-mail com as instruções.
+    <b>Ainda não envie o aparelho</b> — espere o nosso e-mail com as instruções.
   </div>
 
   <a href="index.html" class="btn btn-gray" style="display:block">フォームに戻る · Voltar ao formulário</a>
@@ -50,7 +51,12 @@
 <script src="assets/config.js"></script>
 <script>
   // Pedido enviado: apaga o rascunho salvo no aparelho
-  try { localStorage.removeItem("yuso-shuri-rascunho"); } catch (_) {}
+  const r = new URLSearchParams(location.search).get("r") || "yuso-shuri-rascunho";
+  try { if (/^yuso-shuri-rascunho/.test(r)) localStorage.removeItem(r); } catch (_) {}
+  if (r.endsWith("console")) {
+    document.querySelectorAll('a[href="guia.html"]').forEach((a) => a.href = "consoles.html#envio");
+    document.querySelector('a.btn[href="index.html"]').href = "consoles.html";
+  }
   if (window.LOJA && LOJA.prazoResposta) document.getElementById("prazo").textContent = LOJA.prazoResposta;
 </script>
 </body>
