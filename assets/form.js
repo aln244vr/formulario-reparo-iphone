@@ -71,7 +71,18 @@
     const l = document.createElement("label");
     const c = document.createElement("input");
     c.type = "checkbox"; c.value = s.id; c.checked = (selected || []).includes(s.id);
-    l.append(c, document.createTextNode(t(s.jp, s.pt)));
+    const desc = t(s.djp, s.dpt);
+    if (desc) {
+      /* com descrição: vira um cartão com nome e explicação curta */
+      l.className = "svc-card";
+      const txt = document.createElement("span");
+      const b = document.createElement("b"); b.textContent = t(s.jp, s.pt);
+      const d = document.createElement("small"); d.textContent = desc;
+      txt.append(b, d);
+      l.append(c, txt);
+    } else {
+      l.append(c, document.createTextNode(t(s.jp, s.pt)));
+    }
     return l;
   }
   function renderServices(selected) {

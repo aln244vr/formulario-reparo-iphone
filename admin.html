@@ -95,7 +95,7 @@
   <div id="editor" class="hidden">
     <section class="card">
       <h2>🛠️ Serviços</h2>
-      <p class="hint" style="margin-top:-6px">Nome em português e em japonês. "Personalização" aparece no botão 🎨 do formulário.</p>
+      <p class="hint" style="margin-top:-6px">Nome e descrição curta em português e em japonês (a descrição aparece embaixo do serviço no formulário). "Personalização" aparece no botão 🎨.</p>
       <div id="svc-list"></div>
       <button type="button" class="btn add" id="svc-add">+ Adicionar serviço</button>
     </section>
@@ -240,12 +240,16 @@
     T().servicos.forEach((s, i, arr) => {
       const pt = el("input", { type: "text", class: "grow", value: s.pt, placeholder: "Nome em português", oninput: (e) => { s.pt = e.target.value; changed(); renderPrices(); } });
       const jp = el("input", { type: "text", class: "grow", value: s.jp, placeholder: "日本語の名前", oninput: (e) => { s.jp = e.target.value; changed(); } });
+      const dpt = el("input", { type: "text", class: "grow", value: s.dpt || "", placeholder: "Descrição curta (ex.: 4 botões traseiros)", oninput: (e) => { s.dpt = e.target.value; changed(); } });
+      const djp = el("input", { type: "text", class: "grow", value: s.djp || "", placeholder: "説明（日本語）", oninput: (e) => { s.djp = e.target.value; changed(); } });
       const grp = el("select", { class: "grow", onchange: (e) => { s.grupo = e.target.value; changed(); } },
         el("option", { value: "reparo", textContent: "🔧 Reparo" }), el("option", { value: "custom", textContent: "🎨 Personalização" }));
       grp.value = s.grupo === "custom" ? "custom" : "reparo";
       box.append(el("div", { class: "svc" },
         el("div", { class: "item" }, pt),
         el("div", { class: "item" }, jp),
+        el("div", { class: "item" }, dpt),
+        el("div", { class: "item" }, djp),
         el("div", { class: "item" }, grp,
           iconBtn("↑", "Subir", () => { if (move(arr, i, -1)) { changed(); renderServices(); renderPrices(); } }),
           iconBtn("↓", "Descer", () => { if (move(arr, i, 1)) { changed(); renderServices(); renderPrices(); } }),
