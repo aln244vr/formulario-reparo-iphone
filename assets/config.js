@@ -26,7 +26,7 @@ window.LOJA = {
 window.ENVIO = {
   servico: "formsubmit",
   web3formsChave: "",
-  emailLoja: "aln244vr@gmail.com", // usado no botão "enviar por e-mail" se o serviço falhar
+  emailLoja: "anovammtech@gmail.com", // usado no botão "enviar por e-mail" se o serviço falhar
 };
 
 // Serviços: id interno -> nome exibido
