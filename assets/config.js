@@ -70,6 +70,18 @@ window.CONSOLE_SERVICOS = [
   { id: "gatilhos",  tipo: "controle", jp: "トリガー修理",           pt: "Gatilhos (L2/R2 · LT/RT)" },
   { id: "bateriac",  tipo: "controle", jp: "バッテリー交換",         pt: "Bateria do controle" },
   { id: "conectorc", tipo: "controle", jp: "充電端子修理",           pt: "Conector de carga" },
+  // Personalização de controles (grupo: "custom" aparece separado no formulário)
+  { id: "tmr",       tipo: "controle", grupo: "custom", jp: "TMRスティック",            pt: "Analógicos TMR" },
+  { id: "hall",      tipo: "controle", grupo: "custom", jp: "ホールエフェクトスティック", pt: "Analógicos Hall Effect" },
+  { id: "paddles",   tipo: "controle", grupo: "custom", jp: "背面パドル追加",          pt: "Paddles traseiros" },
+  { id: "capa",      tipo: "controle", grupo: "custom", jp: "シェル交換（カスタム）",  pt: "Capa / carcaça personalizada" },
+  { id: "botoesc",   tipo: "controle", grupo: "custom", jp: "カスタムボタン",          pt: "Botões personalizados" },
+  { id: "dpad",      tipo: "controle", grupo: "custom", jp: "十字キー交換",            pt: "D-pad personalizado" },
+  { id: "clique",    tipo: "controle", grupo: "custom", jp: "クリックトリガー",        pt: "Gatilhos de clique (estilo mouse)" },
+  { id: "trava",     tipo: "controle", grupo: "custom", jp: "トリガーストップ",        pt: "Trava de gatilho (trigger stop)" },
+  { id: "led",       tipo: "controle", grupo: "custom", jp: "LEDカスタム",             pt: "LED / iluminação" },
+  { id: "batmaior",  tipo: "controle", grupo: "custom", jp: "大容量バッテリー",        pt: "Bateria de maior capacidade" },
+  { id: "grip",      tipo: "controle", grupo: "custom", jp: "グリップ加工",            pt: "Grip / textura antiderrapante" },
   { id: "outro",                       jp: "診断・その他",           pt: "Diagnóstico / Outro" },
 ];
 

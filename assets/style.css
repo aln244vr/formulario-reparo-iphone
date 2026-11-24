@@ -195,3 +195,6 @@ html[data-lang="pt"] [lang="ja"], html[data-lang="ja"] [lang="pt"] { display: no
 
 .divider { height: 1px; background: var(--line); margin: 20px 0; }
 .fine { color: var(--muted); font-size: .8rem; text-align: center; margin: 10px 0 0; }
+label.sub { font-weight: 500; font-size: .85rem; color: var(--muted); margin-bottom: 4px; }
+.chips-title { flex-basis: 100%; font-size: .8rem; font-weight: 700; color: var(--muted); margin: 6px 0 -2px; text-transform: uppercase; letter-spacing: .04em; }
+.chips-title:first-child { margin-top: 0; }

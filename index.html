@@ -93,15 +93,37 @@
         </div>
       </div>
 
+      <span class="label" style="margin-bottom:10px"><span lang="ja">返送先の住所</span><span lang="pt">Endereço para devolução</span></span>
+
       <div class="field">
-        <label for="zip"><span lang="ja">返送先の郵便番号</span><span lang="pt">CEP para devolução (〒)</span></label>
-        <input type="tel" id="zip" inputmode="numeric" maxlength="8" autocomplete="postal-code" placeholder="4450000" required>
+        <label for="zip" class="sub"><span lang="ja">郵便番号</span><span lang="pt">CEP (〒)</span></label>
+        <div class="row">
+          <input type="tel" id="zip" inputmode="numeric" maxlength="8" autocomplete="postal-code" placeholder="4440302" required>
+          <button type="button" class="btn btn-ghost shrink" id="zip-btn"><span lang="ja">住所検索</span><span lang="pt">Buscar</span></button>
+        </div>
         <div class="msg" id="zip-msg"></div>
       </div>
 
+      <div class="row">
+        <div class="field" style="flex:0 0 38%">
+          <label for="pref" class="sub"><span lang="ja">都道府県</span><span lang="pt">Província</span></label>
+          <input type="text" id="pref" autocomplete="address-level1" data-ph-ja="愛知県" data-ph-pt="愛知県" required>
+        </div>
+        <div class="field">
+          <label for="city" class="sub"><span lang="ja">市区町村・町名</span><span lang="pt">Cidade e bairro</span></label>
+          <input type="text" id="city" autocomplete="address-level2" data-ph-ja="岡崎市○○町" data-ph-pt="岡崎市○○町" required>
+        </div>
+      </div>
+
       <div class="field">
-        <label for="address"><span lang="ja">住所（番地・部屋番号まで）</span><span lang="pt">Endereço (com número e apto)</span></label>
-        <input type="text" id="address" autocomplete="street-address" required>
+        <label for="street" class="sub"><span lang="ja">番地</span><span lang="pt">Número (番地)</span></label>
+        <input type="text" id="street" autocomplete="address-line1" data-ph-ja="例: 1-2-3" data-ph-pt="Ex.: 1-2-3" required>
+        <div class="msg err hidden" id="street-msg"><span lang="ja">番地（数字）を入力してください</span><span lang="pt">Coloque o número (番地) do endereço</span></div>
+      </div>
+
+      <div class="field">
+        <label for="building" class="sub"><span lang="ja">建物名・部屋番号</span><span lang="pt">Prédio e apto</span> <span class="hint">(<span lang="ja">任意</span><span lang="pt">se tiver</span>)</span></label>
+        <input type="text" id="building" autocomplete="address-line2" data-ph-ja="例: クリスタルオアシス 103" data-ph-pt="Ex.: クリスタルオアシス 103">
       </div>
 
       <div class="msg err hidden" id="form-msg"></div>
