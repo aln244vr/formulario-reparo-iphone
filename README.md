@@ -4,13 +4,13 @@ Site estático (HTML + CSS + JS puro), bilíngue japonês/português.
 
 | Página | O que é |
 |---|---|
-| `index.html` | Formulário de reparo de iPhone |
-| `consoles.html` | Formulário de reparo de consoles e controles (PS3, PS4, PS5, Xbox) |
+| `index.html` | Formulário único: iPhone, console e controle (japonês ou português) |
+| `consoles.html` | Redireciona para `index.html?tipo=console` (link antigo) |
 | `confirmacao.html` | Página exibida depois do envio |
 | `guia.html` | Como enviar o iPhone, FAQ e tabela de preços |
 | `assets/config.js` | **Único arquivo para editar no dia a dia**: preços, serviços, prazo, garantia, endereço |
 | `assets/style.css` | Visual compartilhado |
-| `assets/form.js` | Lógica compartilhada dos dois formulários |
+| `assets/form.js` | Lógica do formulário (modelos, envio, CEP, idioma) |
 
 ## Como mudar preços
 Abra `assets/config.js` e preencha `PRECOS`, por exemplo:
