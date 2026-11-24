@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel do catálogo | Yūsō Shūri</title>
+  <meta name="theme-color" content="#1e3a8a">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+  <style>
+    body { padding-bottom: 96px; }
+    .item { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+    .item input, .item select { padding: 9px 10px; }
+    .item .grow { flex: 1; min-width: 0; }
+    .icon {
+      flex: 0 0 auto; width: 36px; height: 40px; border: 1px solid var(--line); border-radius: 8px;
+      background: #fff; cursor: pointer; font-size: 1rem; color: var(--muted);
+    }
+    .icon.del { color: var(--err); }
+    .svc { border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+    .svc .item { margin-bottom: 6px; }
+    .svc .item:last-child { margin-bottom: 0; }
+    .group { border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-bottom: 12px; background: #fbfcfe; }
+    .group > .item input { font-weight: 700; }
+    .models { padding-left: 10px; border-left: 3px solid var(--brand-soft); margin: 8px 0; }
+    .group-toggle { border: 0; background: none; color: var(--brand-dark); font: inherit; font-size: .85rem; font-weight: 600; padding: 2px 0; cursor: pointer; }
+    .add { background: transparent; border: 1px dashed var(--brand); color: var(--brand-dark); width: 100%; padding: 10px; }
+    .price-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .price-row span { flex: 1; font-size: .92rem; }
+    .price-row input { width: 120px; flex: 0 0 auto; text-align: right; }
+    .savebar {
+      position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid var(--line);
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); box-shadow: 0 -6px 20px rgba(20,30,60,.08);
+    }
+    .savebar .wrap { padding: 0; display: flex; gap: 10px; align-items: center; }
+    .savebar .btn-primary { width: auto; flex: 0 0 auto; padding: 12px 18px; font-size: 1rem; }
+    .savebar .status { flex: 1; font-size: .85rem; color: var(--muted); }
+    .status.dirty { color: var(--warn); font-weight: 600; }
+    .steps-list { padding-left: 20px; margin: 8px 0; font-size: .9rem; }
+    .steps-list li { margin-bottom: 6px; }
+    code { background: #eef1f6; padding: 1px 5px; border-radius: 5px; font-size: .85em; }
+  </style>
+</head>
+<body>
+
+<header class="top slim">
+  <div class="brand">YŪSŌ SHŪRI · PAINEL</div>
+  <h1>Catálogo do formulário</h1>
+  <nav class="nav"><a href="index.html" target="_blank">👁️ Ver formulário</a></nav>
+</header>
+
+<main class="wrap">
+
+  <!-- Conexão -->
+  <section class="card lift" id="conn">
+    <div id="conn-on" class="hidden">
+      <div class="estimate">
+        <span>✅ Conectado ao GitHub</span>
+        <button type="button" class="btn btn-gray" id="logout" style="padding:6px 12px;font-size:.85rem">Desconectar</button>
+      </div>
+    </div>
+    <div id="conn-off">
+      <h2>🔑 Conectar para salvar</h2>
+      <p class="hint" style="margin-top:0">Você pode olhar e editar sem conectar, mas para <b>salvar</b> precisa de uma chave do GitHub. Só precisa fazer isso uma vez neste celular.</p>
+      <details>
+        <summary>Como criar a chave (2 minutos)</summary>
+        <ol class="steps-list">
+          <li>Abra <a href="https://github.com/settings/personal-access-tokens/new" target="_blank">github.com/settings/personal-access-tokens/new</a> (com login na conta <b>aln244vr</b>).</li>
+          <li><b>Token name:</b> <code>painel catalogo</code></li>
+          <li><b>Expiration:</b> escolha <b>1 year</b>.</li>
+          <li><b>Repository access:</b> <b>Only select repositories</b> → <code>formulario-reparo-iphone</code>.</li>
+          <li><b>Permissions</b> → <b>Repository permissions</b> → <b>Contents</b> → <b>Read and write</b>.</li>
+          <li>Toque em <b>Generate token</b>, copie o código (começa com <code>github_pat_</code>) e cole abaixo.</li>
+        </ol>
+      </details>
+      <div class="row" style="margin-top:10px">
+        <input type="password" id="token" placeholder="github_pat_..." autocomplete="off">
+        <button type="button" class="btn btn-ghost shrink" id="connect">Conectar</button>
+      </div>
+      <div class="msg" id="conn-msg"></div>
+      <p class="hint">A chave fica guardada só neste aparelho. Não mande ela para ninguém.</p>
+    </div>
+  </section>
+
+  <!-- Tipo -->
+  <div class="card">
+    <div class="seg" id="tabs">
+      <button type="button" data-tab="iphone"><span class="ico">📱</span>iPhone</button>
+      <button type="button" data-tab="console"><span class="ico">🎮</span>Console</button>
+      <button type="button" data-tab="controle"><span class="ico">🕹️</span>Controle</button>
+    </div>
+  </div>
+
+  <div id="editor" class="hidden">
+    <section class="card">
+      <h2>🛠️ Serviços</h2>
+      <p class="hint" style="margin-top:-6px">Nome em português e em japonês. "Personalização" aparece no botão 🎨 do formulário.</p>
+      <div id="svc-list"></div>
+      <button type="button" class="btn add" id="svc-add">+ Adicionar serviço</button>
+    </section>
+
+    <section class="card">
+      <h2>📋 Modelos</h2>
+      <p class="hint" style="margin-top:-6px">Organizados por série. O cliente vê nessa ordem.</p>
+      <div id="model-list"></div>
+      <button type="button" class="btn add" id="group-add">+ Adicionar série</button>
+    </section>
+
+    <section class="card">
+      <h2>💴 Preços</h2>
+      <p class="hint" style="margin-top:-6px">Em ienes, com imposto. Deixe vazio para "sob orçamento". O formulário mostra a estimativa e o guia mostra a tabela.</p>
+      <div class="field">
+        <select id="price-model"></select>
+      </div>
+      <div id="price-list"></div>
+      <div class="row" style="margin-top:6px">
+        <button type="button" class="btn btn-gray" id="price-copy" style="font-size:.85rem">Copiar estes preços para todos da mesma série</button>
+      </div>
+    </section>
+  </div>
+
+  <p class="fine" id="loading">Carregando catálogo…</p>
+</main>
+
+<div class="savebar">
+  <div class="wrap">
+    <div class="status" id="status">Sem alterações</div>
+    <button type="button" class="btn btn-primary" id="save">💾 Salvar</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  const REPO = "aln244vr/formulario-reparo-iphone", PATH = "assets/catalogo.json", BRANCH = "main";
+  const API = `https://api.github.com/repos/${REPO}/contents/${PATH}`;
+  const TOKEN_KEY = "yuso-admin-token";
+  const $ = (id) => document.getElementById(id);
+
+  let cat = null, sha = null, tab = "iphone", dirty = false;
+  const getToken = () => { try { return localStorage.getItem(TOKEN_KEY) || ""; } catch (_) { return ""; } };
+
+  // ---------- Base64 UTF-8 ----------
+  const enc = (str) => { const b = new TextEncoder().encode(str); let s = ""; for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s); };
+  const dec = (b64) => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+
+  // ---------- Carregar ----------
+  async function load() {
+    const token = getToken();
+    try {
+      if (token) {
+        const r = await fetch(`${API}?ref=${BRANCH}&t=${Date.now()}`, { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" } });
+        if (r.status === 401 || r.status === 403 || r.status === 404) throw Object.assign(new Error("token"), { status: r.status });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const j = await r.json();
+        sha = j.sha; cat = JSON.parse(dec(j.content));
+      } else {
+        const r = await fetch("assets/catalogo.json", { cache: "no-cache" });
+        cat = await r.json(); sha = null;
+      }
+    } catch (e) {
+      if (e.message === "token") {
+        setConnMsg("A chave não funcionou (erro " + e.status + "). Confira as permissões e cole de novo.", true);
+        try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+        return load();
+      }
+      $("loading").textContent = "Não foi possível carregar o catálogo: " + e.message;
+      return;
+    }
+    $("loading").classList.add("hidden");
+    $("editor").classList.remove("hidden");
+    showConn();
+    selectTab(tab);
+    setDirty(false);
+  }
+
+  function showConn() {
+    const on = !!getToken();
+    $("conn-on").classList.toggle("hidden", !on);
+    $("conn-off").classList.toggle("hidden", on);
+  }
+  function setConnMsg(t, err) { $("conn-msg").textContent = t; $("conn-msg").className = "msg " + (err ? "err" : "ok"); }
+
+  $("connect").addEventListener("click", async () => {
+    const tk = $("token").value.trim();
+    if (!/^(github_pat_|ghp_)/.test(tk)) return setConnMsg("Isso não parece uma chave do GitHub (começa com github_pat_).", true);
+    if (dirty && !confirm("Conectar recarrega o catálogo e descarta as alterações não salvas. Continuar?")) return;
+    try { localStorage.setItem(TOKEN_KEY, tk); } catch (_) {}
+    $("token").value = "";
+    setConnMsg("Conectando…", false);
+    await load();
+    if (getToken()) setConnMsg("", false);
+  });
+  $("logout").addEventListener("click", () => {
+    try { localStorage.removeItem(TOKEN_KEY); } catch (_) {}
+    showConn();
+  });
+
+  // ---------- Estado ----------
+  function setDirty(v) {
+    dirty = v;
+    $("status").textContent = v ? "● Alterações não salvas" : "Sem alterações";
+    $("status").className = "status" + (v ? " dirty" : "");
+  }
+  window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+  const T = () => cat.tipos[tab];
+  const changed = () => setDirty(true);
+
+  // ---------- Abas ----------
+  document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => selectTab(b.dataset.tab)));
+  function selectTab(id) {
+    tab = id;
+    document.querySelectorAll("[data-tab]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tab === id)));
+    renderServices(); renderModels(); renderPriceModels();
+  }
+
+  // ---------- Helpers de UI ----------
+  function el(tag, props, ...kids) {
+    const e = document.createElement(tag);
+    Object.entries(props || {}).forEach(([k, v]) => { if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else if (k === "class") e.className = v; else e[k] = v; });
+    kids.forEach((k) => e.append(k));
+    return e;
+  }
+  const iconBtn = (txt, title, fn, cls) => el("button", { type: "button", class: "icon" + (cls ? " " + cls : ""), textContent: txt, title, onclick: fn });
+  function move(arr, i, d) { const j = i + d; if (j < 0 || j >= arr.length) return false; [arr[i], arr[j]] = [arr[j], arr[i]]; return true; }
+
+  // ---------- Serviços ----------
+  function slug(s) {
+    return (s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "servico").slice(0, 24);
+  }
+  function newId(base) {
+    const all = new Set(Object.values(cat.tipos).flatMap((t) => t.servicos.map((s) => s.id)));
+    let id = base, n = 2;
+    while (all.has(id)) id = base + "-" + n++;
+    return id;
+  }
+  function renderServices() {
+    const box = $("svc-list"); box.innerHTML = "";
+    T().servicos.forEach((s, i, arr) => {
+      const pt = el("input", { type: "text", class: "grow", value: s.pt, placeholder: "Nome em português", oninput: (e) => { s.pt = e.target.value; changed(); renderPrices(); } });
+      const jp = el("input", { type: "text", class: "grow", value: s.jp, placeholder: "日本語の名前", oninput: (e) => { s.jp = e.target.value; changed(); } });
+      const grp = el("select", { class: "grow", onchange: (e) => { s.grupo = e.target.value; changed(); } },
+        el("option", { value: "reparo", textContent: "🔧 Reparo" }), el("option", { value: "custom", textContent: "🎨 Personalização" }));
+      grp.value = s.grupo === "custom" ? "custom" : "reparo";
+      box.append(el("div", { class: "svc" },
+        el("div", { class: "item" }, pt),
+        el("div", { class: "item" }, jp),
+        el("div", { class: "item" }, grp,
+          iconBtn("↑", "Subir", () => { if (move(arr, i, -1)) { changed(); renderServices(); renderPrices(); } }),
+          iconBtn("↓", "Descer", () => { if (move(arr, i, 1)) { changed(); renderServices(); renderPrices(); } }),
+          iconBtn("🗑", "Apagar", () => {
+            if (!confirm(`Apagar o serviço "${s.pt}"?`)) return;
+            arr.splice(i, 1);
+            Object.values(T().precos || {}).forEach((p) => delete p[s.id]);
+            changed(); renderServices(); renderPrices();
+          }, "del"))));
+    });
+  }
+  $("svc-add").addEventListener("click", () => {
+    const pt = prompt("Nome do serviço em português:");
+    if (!pt || !pt.trim()) return;
+    const jp = prompt("Nome em japonês (pode deixar vazio e preencher depois):") || "";
+    const custom = tab === "controle" && confirm("É uma personalização? (OK = Personalização, Cancelar = Reparo)");
+    T().servicos.push({ id: newId(slug(pt)), pt: pt.trim(), jp: jp.trim() || pt.trim(), grupo: custom ? "custom" : "reparo" });
+    changed(); renderServices(); renderPrices();
+    $("svc-list").lastElementChild.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  // ---------- Modelos ----------
+  function renameModel(oldName, newName) {
+    const P = T().precos || {};
+    if (P[oldName] && oldName !== newName) { P[newName] = P[oldName]; delete P[oldName]; }
+  }
+  const openGroups = new Set(); // séries abertas (as outras ficam fechadas para a página não ficar enorme)
+  function renderModels() {
+    const box = $("model-list"); box.innerHTML = "";
+    T().modelos.forEach((g, gi, groups) => {
+      const isOpen = openGroups.has(g);
+      const models = el("div", { class: "models" + (isOpen ? "" : " hidden") });
+      g.itens.forEach((m, mi, itens) => {
+        let before = m;
+        const inp = el("input", { type: "text", class: "grow", value: m,
+          oninput: (e) => { itens[mi] = e.target.value; changed(); },
+          onchange: (e) => { renameModel(before, e.target.value.trim()); itens[mi] = before = e.target.value.trim(); renderPriceModels(); } });
+        models.append(el("div", { class: "item" }, inp,
+          iconBtn("↑", "Subir", () => { if (move(itens, mi, -1)) { changed(); renderModels(); renderPriceModels(); } }),
+          iconBtn("↓", "Descer", () => { if (move(itens, mi, 1)) { changed(); renderModels(); renderPriceModels(); } }),
+          iconBtn("🗑", "Apagar", () => {
+            if (!confirm(`Apagar o modelo "${m}"?`)) return;
+            itens.splice(mi, 1); if (T().precos) delete T().precos[m];
+            changed(); renderModels(); renderPriceModels();
+          }, "del")));
+      });
+      models.append(el("button", { type: "button", class: "btn add", textContent: "+ Modelo", style: "padding:7px;font-size:.85rem",
+        onclick: () => {
+          const n = prompt(`Novo modelo na série "${g.grupo}":`);
+          if (!n || !n.trim()) return;
+          g.itens.push(n.trim()); openGroups.add(g); changed(); renderModels(); renderPriceModels();
+        } }));
+      box.append(el("div", { class: "group" },
+        el("div", { class: "item" },
+          el("input", { type: "text", class: "grow", value: g.grupo, oninput: (e) => { g.grupo = e.target.value; changed(); } }),
+          iconBtn("↑", "Subir série", () => { if (move(groups, gi, -1)) { changed(); renderModels(); renderPriceModels(); } }),
+          iconBtn("↓", "Descer série", () => { if (move(groups, gi, 1)) { changed(); renderModels(); renderPriceModels(); } }),
+          iconBtn("🗑", "Apagar série", () => {
+            if (!confirm(`Apagar a série "${g.grupo}" e os ${g.itens.length} modelos dela?`)) return;
+            g.itens.forEach((m) => T().precos && delete T().precos[m]);
+            groups.splice(gi, 1); changed(); renderModels(); renderPriceModels();
+          }, "del")),
+        el("button", { type: "button", class: "group-toggle", textContent: (isOpen ? "▾ " : "▸ ") + g.itens.length + " modelo" + (g.itens.length === 1 ? "" : "s"),
+          onclick: () => { isOpen ? openGroups.delete(g) : openGroups.add(g); renderModels(); } }),
+        models));
+    });
+  }
+  $("group-add").addEventListener("click", () => {
+    const n = prompt("Nome da nova série (ex.: iPhone 18):");
+    if (!n || !n.trim()) return;
+    const g = { grupo: n.trim(), itens: [] };
+    T().modelos.unshift(g); openGroups.add(g);
+    changed(); renderModels(); renderPriceModels();
+  });
+
+  // ---------- Preços ----------
+  const priceModel = $("price-model");
+  function renderPriceModels() {
+    const keep = priceModel.value;
+    priceModel.innerHTML = "";
+    T().modelos.forEach((g) => {
+      const og = el("optgroup", { label: g.grupo });
+      g.itens.forEach((m) => {
+        const has = Object.values((T().precos || {})[m] || {}).some((v) => typeof v === "number");
+        og.append(el("option", { value: m, textContent: (has ? "💴 " : "") + m }));
+      });
+      priceModel.append(og);
+    });
+    if ([...priceModel.options].some((o) => o.value === keep)) priceModel.value = keep;
+    renderPrices();
+  }
+  priceModel.addEventListener("change", renderPrices);
+  // Atualiza só o 💴 da lista de modelos, sem redesenhar os campos de preço
+  function markPricedModels() {
+    [...priceModel.options].forEach((o) => {
+      const has = Object.values((T().precos || {})[o.value] || {}).some((v) => typeof v === "number");
+      o.textContent = (has ? "💴 " : "") + o.value;
+    });
+  }
+  function renderPrices() {
+    const box = $("price-list"); box.innerHTML = "";
+    const m = priceModel.value;
+    if (!m) { box.textContent = "Adicione um modelo primeiro."; return; }
+    T().precos = T().precos || {};
+    T().servicos.forEach((s) => {
+      const v = (T().precos[m] || {})[s.id];
+      const inp = el("input", { type: "text", inputMode: "numeric", placeholder: "orçamento", value: typeof v === "number" ? String(v) : "",
+        oninput: (e) => {
+          const n = parseInt(e.target.value.replace(/[^\d]/g, ""), 10);
+          e.target.value = isNaN(n) ? "" : String(n);
+          const P = (T().precos[m] = T().precos[m] || {});
+          if (isNaN(n)) delete P[s.id]; else P[s.id] = n;
+          if (!Object.keys(P).length) delete T().precos[m];
+          changed();
+        },
+        onchange: markPricedModels });
+      box.append(el("div", { class: "price-row" }, el("span", { textContent: (s.grupo === "custom" ? "🎨 " : "") + s.pt }), el("span", { textContent: "¥", style: "flex:0 0 auto;color:var(--muted)" }), inp));
+    });
+  }
+  $("price-copy").addEventListener("click", () => {
+    const m = priceModel.value;
+    const g = T().modelos.find((g) => g.itens.includes(m));
+    if (!g) return;
+    const src = (T().precos || {})[m];
+    if (!src || !Object.keys(src).length) return alert("Este modelo ainda não tem preço.");
+    if (!confirm(`Copiar os preços de "${m}" para os outros ${g.itens.length - 1} modelos de "${g.grupo}"?`)) return;
+    g.itens.forEach((x) => { if (x !== m) T().precos[x] = Object.assign({}, src); });
+    changed(); renderPriceModels();
+  });
+
+  // ---------- Salvar ----------
+  function validate() {
+    for (const [k, t] of Object.entries(cat.tipos)) {
+      if (t.servicos.some((s) => !s.pt.trim())) return `Há um serviço sem nome em "${t.nome}".`;
+      if (t.modelos.some((g) => !g.grupo.trim())) return `Há uma série sem nome em "${t.nome}".`;
+      if (t.modelos.some((g) => g.itens.some((m) => !m.trim()))) return `Há um modelo sem nome em "${t.nome}".`;
+      const names = t.modelos.flatMap((g) => g.itens);
+      const dup = names.find((m, i) => names.indexOf(m) !== i);
+      if (dup) return `O modelo "${dup}" aparece duas vezes em "${t.nome}".`;
+    }
+    return null;
+  }
+
+  $("save").addEventListener("click", async () => {
+    const token = getToken();
+    if (!token) { $("conn").scrollIntoView({ behavior: "smooth" }); return setConnMsg("Conecte com a chave do GitHub para salvar.", true); }
+    if (!dirty) return;
+    const err = validate();
+    if (err) return alert(err);
+    const btn = $("save");
+    btn.disabled = true; $("status").textContent = "Salvando…";
+    try {
+      // Garante o sha mais recente (evita sobrescrever uma edição feita em outro aparelho sem saber)
+      if (!sha) {
+        const r0 = await fetch(`${API}?ref=${BRANCH}&t=${Date.now()}`, { headers: { Authorization: "Bearer " + token } });
+        if (r0.ok) sha = (await r0.json()).sha;
+      }
+      const r = await fetch(API, {
+        method: "PUT",
+        headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Atualiza catálogo pelo painel", content: enc(JSON.stringify(cat, null, 2) + "\n"), sha, branch: BRANCH }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 409 || r.status === 422) throw new Error("O catálogo foi alterado em outro lugar. Recarregue a página e faça as mudanças de novo.");
+      if (r.status === 401 || r.status === 403) throw new Error("A chave não tem permissão para salvar. Confira: Contents → Read and write.");
+      if (!r.ok) throw new Error(j.message || "HTTP " + r.status);
+      sha = j.content.sha;
+      setDirty(false);
+      $("status").textContent = "✅ Salvo! O site atualiza em 1–2 minutos.";
+    } catch (e) {
+      $("status").textContent = "❌ " + e.message;
+      $("status").className = "status dirty";
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>
