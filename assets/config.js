@@ -17,6 +17,18 @@ window.LOJA = {
   garantia: "", // Ex.: "修理後90日間 (90 dias após o reparo)"
 };
 
+/*
+ * Serviço que recebe os pedidos.
+ *  - "formsubmit": usa o e-mail que está no action do formulário (padrão).
+ *  - "web3forms":  crie uma chave grátis em https://web3forms.com
+ *                  e cole em web3formsChave. (Plano grátis não envia fotos.)
+ */
+window.ENVIO = {
+  servico: "formsubmit",
+  web3formsChave: "",
+  emailLoja: "aln244vr@gmail.com", // usado no botão "enviar por e-mail" se o serviço falhar
+};
+
 // Serviços: id interno -> nome exibido
 window.SERVICOS = [
   { id: "tela",     jp: "画面交換",           pt: "Troca de Tela (Display)" },
