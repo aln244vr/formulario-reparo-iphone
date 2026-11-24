@@ -239,9 +239,77 @@
       return;
     }
     $("form-msg").classList.add("hidden");
+    e.preventDefault();
+    sendForm();
+  });
+
+  // ---------- Envio sem sair da página, com erro visível ----------
+  const ENVIO = window.ENVIO || {};
+  const TIMEOUT_MS = 30000;
+
+  function buildRequest() {
+    const fd = new FormData(form);
+    if (ENVIO.servico === "web3forms" && ENVIO.web3formsChave) {
+      const out = new FormData();
+      out.append("access_key", ENVIO.web3formsChave);
+      out.append("subject", fd.get("_subject") || "Novo pedido de reparo");
+      out.append("from_name", "Yūsō Shūri");
+      out.append("botcheck", fd.get("_honey") || "");
+      for (const [k, v] of fd.entries()) {
+        if (k.startsWith("_")) continue;
+        if (v instanceof File) continue; // plano grátis do Web3Forms não aceita anexos
+        out.append(k, v);
+      }
+      if (fd.getAll("attachment").some((f) => f && f.size)) out.append("Fotos", "Cliente tem fotos — pedir por e-mail");
+      return { url: "https://api.web3forms.com/submit", body: out };
+    }
+    // FormSubmit (padrão): endpoint AJAX devolve JSON com o resultado
+    if (!fd.getAll("attachment").some((f) => f && f.size)) fd.delete("attachment");
+    return { url: form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), body: fd };
+  }
+
+  async function sendForm() {
     submitBtn.disabled = true;
     submitBtn.textContent = "送信中… · Enviando…";
-  });
+    $("fallback").classList.add("hidden");
+    const { url, body } = buildRequest();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    try {
+      const res = await fetch(url, { method: "POST", body, headers: { Accept: "application/json" }, signal: ctrl.signal });
+      let data = {};
+      try { data = await res.json(); } catch (_) {}
+      const ok = res.ok && (data.success === true || data.success === "true");
+      if (!ok) throw new Error(data.message || "HTTP " + res.status);
+      location.href = $("next-url").value;
+    } catch (err) {
+      const why = err.name === "AbortError" ? "時間切れ · O serviço demorou demais para responder"
+        : err instanceof TypeError ? "接続エラー · Sem conexão com o serviço de envio" : err.message;
+      showFallback(why);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // Se o serviço falhar, o cliente ainda pode mandar o pedido por e-mail
+  function showFallback(why) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = submitText;
+    $("form-msg").textContent = "送信できませんでした · Não foi possível enviar (" + why + ")";
+    $("form-msg").classList.remove("hidden");
+    const to = (form.action.match(/formsubmit\.co\/(?:ajax\/)?([^/?#]+@[^/?#]+)/) || [])[1] || ENVIO.emailLoja || "";
+    const fd = new FormData(form);
+    const lines = [];
+    for (const [k, v] of fd.entries()) {
+      if (k.startsWith("_") || v instanceof File || !String(v).trim()) continue;
+      lines.push(k + ": " + v);
+    }
+    const link = $("fallback-link");
+    link.href = "mailto:" + to + "?subject=" + encodeURIComponent(fd.get("_subject") || "Pedido de reparo") +
+      "&body=" + encodeURIComponent(lines.join("\n") + "\n\n(写真はこのメールに添付してください · Anexe as fotos neste e-mail)");
+    $("fallback").classList.toggle("hidden", !to);
+    $("fallback").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 
   // Reativa o botão se o cliente voltar pelo "voltar" do navegador
   window.addEventListener("pageshow", () => { submitBtn.disabled = false; submitBtn.textContent = submitText; });
