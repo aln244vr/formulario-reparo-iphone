@@ -1,434 +1,373 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>修理依頼フォーム | Yūsō Shūri</title>
-  <meta name="description" content="iPhone郵送修理の依頼フォーム — Formulário de reparo de iPhone por correio.">
-  <meta name="theme-color" content="#1e3a8a">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Reparo por Correio | Yūsō Shūri</title>
+    <!-- Carrega o Tailwind CSS para estilização moderna e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1f2937; /* Cinza escuro */
+        }
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db; /* Cinza claro */
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s;
+        }
+        /* Ajuste para o textarea e o botão ficarem lado a lado (em telas grandes) */
+        .flex-textarea-button {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .flex-textarea-button textarea {
+            flex-grow: 1;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6; /* Azul */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+    </style>
 </head>
-<body>
+<body class="p-4 sm:p-8">
 
-<header class="top">
-  <div class="brand">YŪSŌ SHŪRI · 郵送修理</div>
-  <h1>iPhone 修理依頼フォーム</h1>
-  <p>Formulário de reparo de iPhone por correio</p>
-  <nav class="nav">
-    <a href="guia.html">📦 送り方 · Como enviar</a>
-    <a href="guia.html#faq">❓ よくある質問 · FAQ</a>
-    <a href="guia.html#precos" id="nav-precos" class="hidden">💴 料金 · Preços</a>
-  </nav>
-</header>
+    <!-- Container Principal do Formulário -->
+    <div class="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-2xl">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                修理依頼フォーム (Formulário de Pedido de Reparo)
+            </h1>
+            <p class="text-gray-600">
+                Preencha os dados e receba as instruções de envio no seu e-mail.
+            </p>
+        </header>
 
-<main class="wrap">
+        <!-- 
+            IMPORTANTE: 
+            O e-mail de destino foi atualizado para aln244vr@gmail.com.
+        -->
+        <form id="repairForm" action="https://formsubmit.co/aln244vr@gmail.com" method="POST" enctype="multipart/form-data">
+            
+            <!-- Campo de Captcha Oculto (Recomendado pelo FormSubmit) -->
+            <input type="hidden" name="_captcha" value="false">
+            
+            <!-- NOVO: Redireciona para a página de confirmação após o envio -->
+            <input type="hidden" name="_next" value="confirmacao.html">
 
-  <div class="card lift">
-    <div class="steps">
-      <div><b>1</b>フォーム送信<br>Enviar formulário</div>
-      <div><b>2</b>メールで案内<br>Instruções por e-mail</div>
-      <div><b>3</b>iPhoneを発送<br>Enviar o iPhone</div>
-      <div><b>4</b>修理・返送<br>Reparo e devolução</div>
+            <!-- Configura o FormSubmit para formatar o e-mail como uma tabela -->
+            <input type="hidden" name="_template" value="table">
+            
+            <!-- Define um assunto claro para o e-mail que você receberá -->
+            <input type="hidden" name="_subject" value="NOVO PEDIDO DE REPARO - iPhone por Correio">
+            
+            <!-- --------------------------------------- -->
+            <!-- SEÇÃO 1: DADOS DO CLIENTE (お客様情報) -->
+            <!-- --------------------------------------- -->
+            <h2 class="text-xl font-semibold text-blue-600 mb-4 border-b pb-2">1. お客様情報 (Dados do Cliente)</h2>
+
+            <!-- Nome Completo -->
+            <div class="form-group">
+                <label for="name">お名前 (Nome Completo) <span class="text-red-500">*</span></label>
+                <input type="text" id="name" name="Nome" placeholder="例: Yamada Tarou" required>
+            </div>
+
+            <!-- Telefone - Limitado a 11 dígitos numéricos -->
+            <div class="form-group">
+                <label for="phone">電話番号 (Telefone) <span class="text-red-500">*</span></label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="Telefone" 
+                    placeholder="090XXXXXXXXX (apenas 11 números)" 
+                    maxlength="11" 
+                    oninput="this.value=this.value.replace(/[^0-9]/g,'')" 
+                    required
+                >
+            </div>
+            
+            <!-- E-mail - COM DATALIST SEMPRE ATIVO (COMPORTAMENTO PADRÃO) -->
+            <div class="form-group">
+                <label for="email">メールアドレス (E-mail) <span class="text-red-500">*</span></label>
+                <!-- list="email-suggestions" está permanentemente aqui, ativando as sugestões -->
+                <input type="email" id="email" name="Email" placeholder="seuemail@exemplo.com" list="email-suggestions" required>
+                <!-- Datalist com sugestões de domínios em ordem de popularidade no Japão (2025) -->
+                <datalist id="email-suggestions">
+                    <option value="@gmail.com"></option>
+                    <option value="@yahoo.co.jp"></option>
+                    <option value="@docomo.ne.jp"></option>
+                    <option value="@au.com"></option>
+                    <option value="@softbank.ne.jp"></option>
+                    <option value="@i.softbank.jp"></option>
+                    <option value="@icloud.com"></option>
+                    <option value="@outlook.com"></option>
+                    <option value="@hotmail.com"></option>
+                    <option value="@rakuten.jp"></option>
+                </datalist>
+            </div>
+
+            <!-- Endereço (Opção simplificada para coleta, sem busca automática de CEP) -->
+            <div class="form-group">
+                <label for="address">ご住所 (Endereço Completo para Devolução)</label>
+                <textarea id="address" name="Endereco" rows="3" placeholder="〒XXX-XXXX 愛知県西尾市..."></textarea>
+            </div>
+
+            <!-- --------------------------------------- -->
+            <!-- SEÇÃO 2: DADOS DO REPARO (修理内容) -->
+            <!-- --------------------------------------- -->
+            <h2 class="text-xl font-semibold text-blue-600 mb-4 mt-6 border-b pb-2">2. 修理内容 (Detalhes do Reparo)</h2>
+
+            <!-- Série do iPhone (Primeiro Select) -->
+            <div class="form-group">
+                <label for="series-select">iPhoneのシリーズ (Série do iPhone) <span class="text-red-500">*</span></label>
+                <select id="series-select" onchange="populateModels()" required>
+                    <option value="" disabled selected>選択してください (Selecione)</option>
+                    <!-- As opções da série são preenchidas pelo JS no carregamento -->
+                </select>
+            </div>
+
+            <!-- Modelo Exato do iPhone (Segundo Select - Cascata) -->
+            <div class="form-group">
+                <label for="model-select">正確なモデル (Modelo Exato) <span class="text-red-500">*</span></label>
+                <select id="model-select" name="Modelo do iPhone" disabled required>
+                    <option value="" disabled selected>Primeiro escolha a série (Primeiro escolha a série)</option>
+                </select>
+            </div>
+
+            <!-- Tipo de Serviço -->
+            <div class="form-group">
+                <label for="service">ご希望の修理サービス (Serviço Desejado) <span class="text-red-500">*</span></label>
+                <select id="service" name="Servico Desejado" required>
+                    <option value="" disabled selected>選択してください (Selecione)</option>
+                    <option value="Troca de Tela (Display)">画面交換 (Troca de Tela/Display)</option>
+                    <option value="Troca de Bateria">バッテリー交換 (Troca de Bateria)</option>
+                    <option value="Troca de Vidro Traseiro">背面ガラス交換 (Troca de Vidro Traseiro)</option>
+                    <option value="Diagnóstico/Outro">診断/その他の修理 (Diagnóstico / Outro Reparo)</option>
+                </select>
+            </div>
+            
+            <!-- CAMPO: UPLOAD DE FOTOS -->
+            <div class="form-group">
+                <label for="photos">写真の添付 (Anexar Fotos do Dano)</label>
+                <input type="file" id="photos" name="Fotos do Dano" accept="image/jpeg, image/png" multiple>
+                <p class="text-sm text-gray-500 mt-1">
+                    <span class="font-semibold">最大2枚まで推奨</span> (Recomendamos no máximo 2 fotos). <br> Ajuda a confirmar a cotação inicial.
+                </p>
+            </div>
+
+            <!-- Descrição do Problema - AGORA COM RECURSO GEMINI -->
+            <div class="form-group">
+                <label for="problem">故障内容の詳細 (Detalhes do Problema)</label>
+                <div class="flex flex-col sm:flex-row items-start space-y-2 sm:space-y-0 sm:space-x-2 mb-2">
+                    <textarea id="problem" name="Detalhes do Problema" rows="4" placeholder="Ex: A tela está rachada e o toque não funciona na metade inferior."></textarea>
+                    <button type="button" id="analyze-problem-btn" onclick="formalizeProblemDescription()" class="flex-shrink-0 bg-purple-600 text-white font-semibold py-2 px-3 rounded-xl hover:bg-purple-700 transition duration-300 shadow-md text-sm whitespace-nowrap w-full sm:w-auto mt-1 sm:mt-0">
+                        ✨ Analisar e Detalhar
+                    </button>
+                </div>
+                <!-- Área de Mensagem para Erros ou Feedback -->
+                <div id="problem-message" class="text-sm text-red-500 mt-1 hidden" role="alert"></div>
+            </div>
+
+            <!-- Botão de Envio -->
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition duration-300 shadow-md mt-6">
+                修理を依頼する (Solicitar Reparo)
+            </button>
+            
+            <!-- Aviso de Privacidade e Segurança -->
+            <p class="text-center text-xs text-gray-500 mt-4">
+                送信後、すぐに確認メールが届きます。(Após o envio, você receberá um e-mail de confirmação.)
+            </p>
+        </form>
     </div>
-  </div>
 
-  <form id="repairForm" action="https://formsubmit.co/aln244vr@gmail.com" method="POST" enctype="multipart/form-data" novalidate>
-    <!-- Configuração do FormSubmit -->
-    <input type="hidden" name="_captcha" value="false">
-    <input type="hidden" name="_template" value="table">
-    <input type="hidden" name="_subject" value="NOVO PEDIDO DE REPARO - iPhone por Correio">
-    <input type="hidden" name="_next" id="next-url" value="">
-    <input type="hidden" name="_autoresponse" value="修理のご依頼ありがとうございます。内容を確認のうえ、24時間以内に発送方法をご案内します。 / Obrigado pelo seu pedido! Em até 24 horas enviaremos as instruções de envio.">
-    <!-- Anti-spam: campo invisível que robôs preenchem -->
-    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
-    <!-- Preenchidos pelo JavaScript -->
-    <input type="hidden" name="Servicos Desejados" id="h-servicos">
-    <input type="hidden" name="Sintomas" id="h-sintomas">
-    <input type="hidden" name="Estimativa Mostrada" id="h-estimativa">
+    <script>
+        // Variáveis e utilitários para integração com Gemini API
+        const apiKey = ""; // A chave é fornecida automaticamente pelo ambiente
+        const problemMessageDiv = document.getElementById('problem-message');
 
-    <!-- 1. CLIENTE -->
-    <section class="card">
-      <h2>1. お客様情報 <small>· Seus dados</small></h2>
+        // Função para exibir mensagens na UI (substituindo o alert)
+        function showProblemMessage(message, isError = false) {
+            problemMessageDiv.textContent = message;
+            problemMessageDiv.className = isError 
+                ? 'text-sm text-red-500 mt-1' 
+                : 'text-sm text-green-600 mt-1';
+            problemMessageDiv.style.display = 'block';
+            
+            // Oculta a mensagem após 5 segundos
+            setTimeout(() => {
+                problemMessageDiv.style.display = 'none';
+            }, 5000);
+        }
 
-      <div class="field">
-        <label for="name">お名前 · Nome completo <span class="req">*</span></label>
-        <input type="text" id="name" name="Nome" placeholder="例: 山田 太郎 / Yamada Tarou" autocomplete="name" required>
-      </div>
+        // Utility for exponential backoff (for API resilience)
+        async function exponentialBackoffFetch(url, options, maxRetries = 5) {
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        return response;
+                    } else if (response.status === 429 && attempt < maxRetries - 1) {
+                        const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                } catch (error) {
+                    if (attempt === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            throw new Error("Max retries reached.");
+        }
 
-      <div class="field">
-        <label for="phone">電話番号 · Telefone <span class="req">*</span></label>
-        <input type="tel" id="phone" name="Telefone" placeholder="09012345678" inputmode="numeric" autocomplete="tel" maxlength="11" required>
-        <div class="hint">ハイフンなし 10〜11桁 · Só números, 10 ou 11 dígitos</div>
-      </div>
+        async function fetchLLMResponse(userQuery, systemPrompt) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-      <div class="field">
-        <label for="email">メールアドレス · E-mail <span class="req">*</span></label>
-        <input type="email" id="email" name="email" placeholder="seuemail@gmail.com" autocomplete="email" inputmode="email" required>
-        <div class="hint" id="email-suggest"></div>
-      </div>
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
 
-      <div class="field">
-        <label for="line">LINE ID <span class="hint">(任意 · opcional)</span></label>
-        <input type="text" id="line" name="LINE ID" placeholder="LINEで連絡を希望する場合 · se preferir contato pelo LINE">
-      </div>
-    </section>
+            try {
+                const response = await exponentialBackoffFetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || 'Erro ao gerar descrição detalhada.';
+                return text;
 
-    <!-- 2. ENDEREÇO -->
-    <section class="card">
-      <h2>2. 返送先 <small>· Endereço para devolução</small></h2>
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return 'Erro ao conectar com o serviço de IA.';
+            }
+        }
 
-      <div class="field">
-        <label for="zip">郵便番号 · CEP (〒) <span class="req">*</span></label>
-        <div class="row">
-          <input type="tel" id="zip" name="CEP" placeholder="4450000" inputmode="numeric" maxlength="8" autocomplete="postal-code" required>
-          <button type="button" class="btn btn-ghost shrink" id="zip-btn">住所検索 · Buscar</button>
-        </div>
-        <div class="msg" id="zip-msg"></div>
-      </div>
+        // Função de IA para formalizar e expandir a descrição do problema
+        async function formalizeProblemDescription() {
+            const problemTextarea = document.getElementById('problem');
+            const analyzeButton = document.getElementById('analyze-problem-btn');
+            const currentText = problemTextarea.value.trim();
 
-      <div class="field">
-        <label for="address">住所 · Endereço <span class="req">*</span></label>
-        <input type="text" id="address" name="Endereco" placeholder="愛知県西尾市…" autocomplete="street-address" required>
-        <div class="hint">郵便番号を入れると自動入力されます · Preenchido automaticamente pelo CEP</div>
-      </div>
+            if (!currentText) {
+                showProblemMessage("Por favor, digite uma breve descrição do problema antes de analisar.", true);
+                return;
+            }
 
-      <div class="field">
-        <label for="address2">番地・建物名・部屋番号 · Número, prédio, apto <span class="req">*</span></label>
-        <input type="text" id="address2" name="Numero e Complemento" placeholder="例: 1-2-3 ○○マンション 101" required>
-      </div>
-    </section>
+            analyzeButton.disabled = true;
+            analyzeButton.textContent = '✨ Analisando...';
+            problemMessageDiv.style.display = 'none';
 
-    <!-- 3. APARELHO E REPARO -->
-    <section class="card">
-      <h2>3. 修理内容 <small>· Aparelho e reparo</small></h2>
+            // System prompt para direcionar o modelo
+            const systemPrompt = `Você é um especialista em recepção de reparos de iPhone. Sua tarefa é receber a descrição bruta do cliente e expandi-la em um relatório formal e detalhado para o técnico. Seu relatório deve ser claro, conciso, e estruturado com títulos usando Markdown. O relatório deve conter:
+            
+            1. **Descrição Formal do Dano**
+            2. **Sintomas Atuais** (funcionalidade de toque, display, som, etc.)
+            3. **Causa Aparente** (Queda, Água, Desgaste, etc.)
+            
+            Responda apenas com o texto do relatório formatado em Markdown, sem introduções, saudações ou explicações.`;
 
-      <div class="field">
-        <label for="series-select">シリーズ · Série do iPhone <span class="req">*</span></label>
-        <select id="series-select" required>
-          <option value="" disabled selected>選択してください · Selecione</option>
-        </select>
-      </div>
+            const generatedText = await fetchLLMResponse(currentText, systemPrompt);
 
-      <div class="field">
-        <label for="model-select">モデル · Modelo exato <span class="req">*</span></label>
-        <select id="model-select" name="Modelo do iPhone" disabled required>
-          <option value="" disabled selected>先にシリーズを選択 · Escolha a série primeiro</option>
-        </select>
-        <div class="hint">設定 › 一般 › 情報 で確認できます · Veja em Ajustes › Geral › Sobre</div>
-      </div>
+            // Substitui o conteúdo do textarea pelo texto gerado
+            if (!generatedText.startsWith('Erro')) {
+                problemTextarea.value = generatedText;
+                showProblemMessage("Análise de IA concluída! Revise o relatório antes de enviar.", false);
+            } else {
+                showProblemMessage(generatedText, true); 
+            }
+            
+            analyzeButton.disabled = false;
+            analyzeButton.textContent = '✨ Analisar e Detalhar';
+        }
+        
+        // Dados dos modelos de iPhone em cascata (Lógica original)
+        const iphoneModels = {
+            'iPhone 17 / 17 Air / 17 Pro / 17 Pro Max (2025)': ['iPhone 17', 'iPhone 17 Air', 'iPhone 17 Pro', 'iPhone 17 Pro Max'],
+            'iPhone 16 / 16 Plus / 16 Pro / 16 Pro Max': ['iPhone 16', 'iPhone 16 Plus', 'iPhone 16 Pro', 'iPhone 16 Pro Max'],
+            'iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max': ['iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max'],
+            'iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max': ['iPhone 14', 'iPhone 14 Plus', 'iPhone 14 Pro', 'iPhone 14 Pro Max'],
+            'iPhone 13 / 13 mini / 13 Pro / 13 Pro Max': ['iPhone 13', 'iPhone 13 mini', 'iPhone 13 Pro', 'iPhone 13 Pro Max'],
+            'iPhone 12 / 12 mini / 12 Pro / 12 Pro Max': ['iPhone 12', 'iPhone 12 mini', 'iPhone 12 Pro', 'iPhone 12 Pro Max'],
+            'iPhone 11 / 11 Pro / 11 Pro Max': ['iPhone 11', 'iPhone 11 Pro', 'iPhone 11 Pro Max'],
+            'iPhone SE (Todas as Gerações)': ['iPhone SE (1ª Geração)', 'iPhone SE (2ª Geração)', 'iPhone SE (3ª Geração)'],
+            'iPhone X e Modelos Antigos': ['iPhone X', 'iPhone 8 / 8 Plus', 'iPhone 7 / 7 Plus', 'iPhone 6s / 6s Plus e Antigos']
+        };
 
-      <div class="field hidden" id="other-model-wrap">
-        <label for="other-model">モデル名 · Nome do modelo <span class="req">*</span></label>
-        <input type="text" id="other-model" name="Modelo (digitado)" placeholder="例: iPhone 17e">
-      </div>
+        // Função para preencher a caixa de seleção de modelos com base na série
+        function populateModels() {
+            const seriesSelect = document.getElementById('series-select');
+            const modelSelect = document.getElementById('model-select');
+            const selectedSeries = seriesSelect.value;
 
-      <div class="field">
-        <span class="label">ご希望の修理 · Serviço desejado <span class="req">*</span></span>
-        <div class="chips" id="services"></div>
-        <div class="hint">複数選択できます · Pode escolher mais de um</div>
-        <div class="msg err hidden" id="services-msg">修理内容を1つ以上選んでください · Escolha pelo menos um serviço</div>
-      </div>
+            // Limpa as opções existentes do segundo select
+            modelSelect.innerHTML = '<option value="" disabled selected>選択してください (Selecione)</option>';
+            modelSelect.disabled = true;
 
-      <div class="box box-info hidden" id="estimate">
-        <div class="estimate">
-          <span>目安料金 · Estimativa</span>
-          <strong id="estimate-value"></strong>
-        </div>
-        <div class="hint" id="estimate-note">税込・診断後に確定 · Com impostos, confirmado após diagnóstico</div>
-      </div>
-    </section>
+            if (selectedSeries && iphoneModels[selectedSeries]) {
+                const models = iphoneModels[selectedSeries];
+                
+                // Adiciona a mensagem "Primeiro escolha a série" como a primeira opção (desabilitada)
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "選択してください (Selecione)";
+                modelSelect.appendChild(defaultOption);
 
-    <!-- 4. PROBLEMA -->
-    <section class="card">
-      <h2>4. 症状 <small>· O que está acontecendo</small></h2>
+                // Preenche com os modelos da série selecionada
+                models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    modelSelect.appendChild(option);
+                });
 
-      <div class="field">
-        <span class="label">当てはまる症状 · Marque o que se aplica</span>
-        <div class="chips" id="symptoms"></div>
-      </div>
+                modelSelect.disabled = false;
+            } else {
+                // Se nada for selecionado, restaura a mensagem inicial
+                const initialOption = document.createElement('option');
+                initialOption.value = "";
+                initialOption.textContent = "Primeiro escolha a série (Primeiro escolha a série)";
+                initialOption.selected = true;
+                initialOption.disabled = true;
+                modelSelect.appendChild(initialOption);
+            }
+        }
+        
+        // Função para preencher a caixa de seleção de Séries
+        function populateSeries() {
+            const seriesSelect = document.getElementById('series-select');
 
-      <div class="field">
-        <label for="problem">詳しい内容 · Descreva o problema</label>
-        <textarea id="problem" name="Detalhes do Problema" rows="4" placeholder="Ex.: Caiu no chão semana passada. A câmera traseira treme e o Face ID diz &quot;indisponível&quot;."></textarea>
-      </div>
-
-      <div class="field">
-        <label for="photos">写真 · Fotos do dano <span class="hint">(任意 · opcional, até 3)</span></label>
-        <input type="file" id="photos" name="attachment" accept="image/*" multiple>
-        <div class="msg" id="photos-msg"></div>
-      </div>
-
-      <div class="field">
-        <label for="imei">IMEI <span class="hint">(任意 · opcional)</span></label>
-        <input type="tel" id="imei" name="IMEI" inputmode="numeric" maxlength="15" placeholder="15桁 · 15 dígitos">
-        <div class="hint">設定 › 一般 › 情報 · ou disque *#06#</div>
-      </div>
-    </section>
-
-    <!-- 5. CONFIRMAÇÃO -->
-    <section class="card">
-      <h2>5. 確認 <small>· Antes de enviar</small></h2>
-
-      <label class="check">
-        <input type="checkbox" name="Backup feito" value="Sim">
-        <span>バックアップを取りました · Fiz backup do iPhone (iCloud ou computador)</span>
-      </label>
-      <label class="check">
-        <input type="checkbox" id="agree" name="Concorda com o guia" value="Sim" required>
-        <span><a href="guia.html" target="_blank">送り方・注意事項</a>を読み、同意します <span class="req">*</span><br>Li o <a href="guia.html" target="_blank">guia de envio</a> e concordo</span>
-      </label>
-      <div class="msg err hidden" id="agree-msg">同意が必要です · É preciso concordar para continuar</div>
-
-      <div class="msg err hidden" id="form-msg"></div>
-      <button type="submit" class="btn btn-primary" id="submit-btn">修理を依頼する · Solicitar reparo</button>
-      <p class="hint" style="text-align:center">送信後、確認メールが届きます · Você receberá um e-mail de confirmação</p>
-    </section>
-  </form>
-</main>
-
-<footer>© Yūsō Shūri · <a href="guia.html">送り方 · Como enviar</a></footer>
-
-<script src="assets/config.js"></script>
-<script>
-(function () {
-  "use strict";
-  const $ = (id) => document.getElementById(id);
-
-  // ---------- Modelos ----------
-  const OUTRO = "その他・わからない · Outro / Não sei";
-  const iphoneModels = {
-    "iPhone 17 / Air / 17 Pro / 17 Pro Max": ["iPhone 17", "iPhone Air", "iPhone 17 Pro", "iPhone 17 Pro Max"],
-    "iPhone 16 / 16e / 16 Plus / 16 Pro / 16 Pro Max": ["iPhone 16", "iPhone 16e", "iPhone 16 Plus", "iPhone 16 Pro", "iPhone 16 Pro Max"],
-    "iPhone 15 / 15 Plus / 15 Pro / 15 Pro Max": ["iPhone 15", "iPhone 15 Plus", "iPhone 15 Pro", "iPhone 15 Pro Max"],
-    "iPhone 14 / 14 Plus / 14 Pro / 14 Pro Max": ["iPhone 14", "iPhone 14 Plus", "iPhone 14 Pro", "iPhone 14 Pro Max"],
-    "iPhone 13 / 13 mini / 13 Pro / 13 Pro Max": ["iPhone 13", "iPhone 13 mini", "iPhone 13 Pro", "iPhone 13 Pro Max"],
-    "iPhone 12 / 12 mini / 12 Pro / 12 Pro Max": ["iPhone 12", "iPhone 12 mini", "iPhone 12 Pro", "iPhone 12 Pro Max"],
-    "iPhone 11 / 11 Pro / 11 Pro Max": ["iPhone 11", "iPhone 11 Pro", "iPhone 11 Pro Max"],
-    "iPhone XS / XR / X": ["iPhone XS", "iPhone XS Max", "iPhone XR", "iPhone X"],
-    "iPhone SE": ["iPhone SE (第3世代 · 3ª geração)", "iPhone SE (第2世代 · 2ª geração)", "iPhone SE (第1世代 · 1ª geração)"],
-    "iPhone 8 以前 · 8 ou anterior": ["iPhone 8", "iPhone 8 Plus", "iPhone 7", "iPhone 7 Plus", "iPhone 6s / 6s Plus ou anterior"],
-  };
-  iphoneModels[OUTRO] = [OUTRO];
-
-  const series = $("series-select"), model = $("model-select");
-  Object.keys(iphoneModels).forEach((s) => series.add(new Option(s, s)));
-
-  function fillModels() {
-    const list = iphoneModels[series.value] || [];
-    model.innerHTML = "";
-    model.add(new Option("選択してください · Selecione", ""));
-    model.options[0].disabled = true;
-    list.forEach((m) => model.add(new Option(m, m)));
-    model.disabled = !list.length;
-    model.value = list.length === 1 ? list[0] : "";
-    onModelChange();
-  }
-  function onModelChange() {
-    const other = model.value === OUTRO;
-    $("other-model-wrap").classList.toggle("hidden", !other);
-    $("other-model").required = other;
-    updateEstimate();
-  }
-  series.addEventListener("change", fillModels);
-  model.addEventListener("change", onModelChange);
-
-  // ---------- Serviços e sintomas (chips) ----------
-  const SERVICOS = window.SERVICOS || [];
-  const PRECOS = window.PRECOS || {};
-  const SINTOMAS = [
-    "画面割れ · Tela trincada", "タッチ不良 · Toque falhando", "画面が映らない · Tela preta",
-    "電池の減りが早い · Bateria acaba rápido", "充電できない · Não carrega", "電源が入らない · Não liga",
-    "カメラが揺れる・ピンボケ · Câmera treme / sem foco", "カメラが黒い · Câmera preta",
-    "Face IDが使えない · Face ID não funciona", "水没 · Molhou", "落下 · Caiu",
-    "音が出ない · Sem som", "マイク不良 · Microfone ruim", "熱くなる · Esquenta",
-  ];
-
-  function chips(containerId, items, valueOf, labelOf) {
-    const box = $(containerId);
-    items.forEach((it) => {
-      const l = document.createElement("label");
-      const c = document.createElement("input");
-      c.type = "checkbox"; c.value = valueOf(it);
-      l.append(c, document.createTextNode(labelOf(it)));
-      box.appendChild(l);
-    });
-    box.addEventListener("change", () => { syncHidden(); updateEstimate(); saveDraft(); });
-  }
-  chips("services", SERVICOS, (s) => s.id, (s) => s.jp + " · " + s.pt);
-  chips("symptoms", SINTOMAS, (s) => s, (s) => s);
-
-  const checked = (id) => [...$(id).querySelectorAll("input:checked")].map((c) => c.value);
-  const serviceName = (id) => { const s = SERVICOS.find((x) => x.id === id); return s ? s.pt + " (" + s.jp + ")" : id; };
-
-  function syncHidden() {
-    $("h-servicos").value = checked("services").map(serviceName).join(", ");
-    $("h-sintomas").value = checked("symptoms").join(", ");
-    if (checked("services").length) $("services-msg").classList.add("hidden");
-  }
-
-  // ---------- Estimativa ----------
-  const yen = (n) => "¥" + n.toLocaleString("ja-JP");
-  const hasPrices = Object.values(PRECOS).some((m) => Object.values(m).some((v) => typeof v === "number"));
-  if (hasPrices) $("nav-precos").classList.remove("hidden");
-
-  function updateEstimate() {
-    const sel = checked("services");
-    const box = $("estimate");
-    if (!sel.length || !model.value) { box.classList.add("hidden"); $("h-estimativa").value = ""; return; }
-    const table = PRECOS[model.value] || {};
-    let total = 0, unknown = false;
-    sel.forEach((id) => { const v = table[id]; if (typeof v === "number") total += v; else unknown = true; });
-    let text;
-    if (!hasPrices || total === 0) text = "お見積り後にご連絡 · Orçamento por e-mail";
-    else if (unknown) text = yen(total) + " 〜 (+要見積り · + orçamento)";
-    else text = yen(total);
-    $("estimate-value").textContent = text;
-    $("estimate-value").classList.toggle("as-text", !hasPrices || total === 0);
-    $("estimate-note").classList.toggle("hidden", !hasPrices || total === 0);
-    $("h-estimativa").value = text;
-    box.classList.remove("hidden");
-  }
-
-  // ---------- Telefone / IMEI: só números ----------
-  ["phone", "imei"].forEach((id) => $(id).addEventListener("input", (e) => {
-    e.target.value = toHalfWidth(e.target.value).replace(/\D/g, "");
-  }));
-  function toHalfWidth(s) { return s.replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xFEE0)); }
-
-  // ---------- Sugestão de e-mail ----------
-  const DOMAINS = ["gmail.com", "yahoo.co.jp", "docomo.ne.jp", "au.com", "ezweb.ne.jp", "softbank.ne.jp", "i.softbank.jp", "icloud.com", "outlook.com", "hotmail.com", "ymobile.ne.jp", "rakuten.jp"];
-  $("email").addEventListener("input", (e) => {
-    const v = e.target.value, at = v.indexOf("@"), out = $("email-suggest");
-    out.innerHTML = "";
-    if (at < 1) return;
-    const typed = v.slice(at + 1).toLowerCase();
-    DOMAINS.filter((d) => d.startsWith(typed) && d !== typed).slice(0, 4).forEach((d) => {
-      const b = document.createElement("button");
-      b.type = "button"; b.className = "btn btn-gray"; b.style.cssText = "padding:4px 10px;margin:4px 6px 0 0;font-size:.8rem;font-weight:600";
-      b.textContent = "@" + d;
-      b.onclick = () => { e.target.value = v.slice(0, at + 1) + d; out.innerHTML = ""; saveDraft(); };
-      out.appendChild(b);
-    });
-  });
-
-  // ---------- CEP -> endereço (zipcloud, JSONP) ----------
-  const zip = $("zip"), zipMsg = $("zip-msg");
-  let lastZip = "";
-  zip.addEventListener("input", () => {
-    const d = toHalfWidth(zip.value).replace(/\D/g, "").slice(0, 7);
-    zip.value = d.length > 3 ? d.slice(0, 3) + "-" + d.slice(3) : d;
-    if (d.length === 7 && d !== lastZip) lookupZip(d);
-  });
-  $("zip-btn").addEventListener("click", () => {
-    const d = zip.value.replace(/\D/g, "");
-    if (d.length !== 7) return setZipMsg("7桁で入力してください · Digite 7 números", true);
-    lookupZip(d);
-  });
-  function setZipMsg(t, err) { zipMsg.textContent = t; zipMsg.className = "msg " + (err ? "err" : "ok"); }
-  function lookupZip(d) {
-    lastZip = d;
-    setZipMsg("検索中… · Buscando…", false);
-    const cb = "zipcb_" + Date.now();
-    const s = document.createElement("script");
-    const timer = setTimeout(() => { cleanup(); setZipMsg("検索できませんでした。手入力してください · Não deu para buscar, digite o endereço", true); }, 6000);
-    function cleanup() { clearTimeout(timer); delete window[cb]; s.remove(); }
-    window[cb] = (res) => {
-      cleanup();
-      const r = res && res.results && res.results[0];
-      if (!r) return setZipMsg("見つかりませんでした · CEP não encontrado", true);
-      $("address").value = r.address1 + r.address2 + r.address3;
-      setZipMsg("✓ 住所を入力しました · Endereço preenchido", false);
-      $("address2").focus();
-      saveDraft();
-    };
-    s.src = "https://zipcloud.ibsnet.co.jp/api/search?zipcode=" + d + "&callback=" + cb;
-    s.onerror = () => { cleanup(); setZipMsg("検索できませんでした。手入力してください · Não deu para buscar, digite o endereço", true); };
-    document.body.appendChild(s);
-  }
-
-  // ---------- Fotos ----------
-  const MAX_FILES = 3, MAX_MB = 5;
-  $("photos").addEventListener("change", (e) => {
-    const files = [...e.target.files], msg = $("photos-msg");
-    if (files.length > MAX_FILES) {
-      e.target.value = "";
-      msg.textContent = `最大${MAX_FILES}枚まで · No máximo ${MAX_FILES} fotos`; msg.className = "msg err"; return;
-    }
-    const big = files.find((f) => f.size > MAX_MB * 1024 * 1024);
-    if (big) {
-      e.target.value = "";
-      msg.textContent = `1枚${MAX_MB}MBまで · Cada foto até ${MAX_MB} MB`; msg.className = "msg err"; return;
-    }
-    msg.textContent = files.length ? `✓ ${files.length}枚選択 · ${files.length} foto(s)` : ""; msg.className = "msg ok";
-  });
-
-  // ---------- Rascunho (salvo só neste aparelho) ----------
-  const form = $("repairForm");
-  const DRAFT_KEY = "yuso-shuri-rascunho";
-  const draftFields = ["name", "phone", "email", "line", "zip", "address", "address2", "problem", "imei", "other-model"];
-  function saveDraft() {
-    try {
-      const d = {};
-      draftFields.forEach((id) => (d[id] = $(id).value));
-      d.series = series.value; d.model = model.value;
-      d.services = checked("services"); d.symptoms = checked("symptoms");
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
-    } catch (_) {}
-  }
-  function loadDraft() {
-    try {
-      const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-      if (!d) return;
-      draftFields.forEach((id) => { if (d[id]) $(id).value = d[id]; });
-      if (d.series && iphoneModels[d.series]) { series.value = d.series; fillModels(); if (d.model) model.value = d.model; }
-      [["services", d.services], ["symptoms", d.symptoms]].forEach(([box, vals]) =>
-        (vals || []).forEach((v) => { const c = $(box).querySelector(`input[value="${CSS.escape(v)}"]`); if (c) c.checked = true; }));
-      if (d.zip) lastZip = d.zip.replace(/\D/g, "");
-      onModelChange(); syncHidden();
-    } catch (_) {}
-  }
-  form.addEventListener("input", saveDraft);
-  form.addEventListener("change", saveDraft);
-  loadDraft();
-
-  // ---------- Envio ----------
-  $("next-url").value = new URL("confirmacao.html", location.href).href;
-
-  form.addEventListener("submit", (e) => {
-    syncHidden();
-    let ok = true, first = null;
-    const flag = (el) => { ok = false; if (!first) first = el; };
-
-    form.querySelectorAll("[required]").forEach((el) => {
-      el.style.borderColor = "";
-      if (el.type === "checkbox") return;
-      if (!el.value.trim() || !el.checkValidity()) { el.style.borderColor = "var(--err)"; flag(el); }
-    });
-    const phone = $("phone").value;
-    if (phone && (phone.length < 10 || phone.length > 11)) { $("phone").style.borderColor = "var(--err)"; flag($("phone")); }
-    if (!checked("services").length) { $("services-msg").classList.remove("hidden"); flag($("services")); }
-    const agreed = $("agree").checked;
-    $("agree-msg").classList.toggle("hidden", agreed);
-    if (!agreed) flag($("agree"));
-
-    if (!ok) {
-      e.preventDefault();
-      $("form-msg").textContent = "赤い項目を確認してください · Confira os campos destacados";
-      $("form-msg").classList.remove("hidden");
-      first.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    $("form-msg").classList.add("hidden");
-    $("submit-btn").disabled = true;
-    $("submit-btn").textContent = "送信中… · Enviando…";
-    try { sessionStorage.setItem("yuso-shuri-enviado", "1"); } catch (_) {}
-  });
-
-  // Reativa o botão se o cliente voltar para esta página pelo "voltar" do navegador
-  window.addEventListener("pageshow", () => { $("submit-btn").disabled = false; $("submit-btn").textContent = "修理を依頼する · Solicitar reparo"; });
-})();
-</script>
+            // Adiciona todas as chaves (séries) do objeto iphoneModels como opções
+            Object.keys(iphoneModels).forEach(series => {
+                const option = document.createElement('option');
+                option.value = series;
+                option.textContent = series;
+                seriesSelect.appendChild(option);
+            });
+        }
+        
+        // Garante que as configurações de inicialização sejam carregadas
+        window.onload = function() {
+            populateSeries(); // Carrega as opções de série do iPhone
+        };
+    </script>
 </body>
 </html>
