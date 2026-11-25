@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>Painel do catálogo | Anova MM Tech</title>
-  <meta name="theme-color" content="#1e3a8a">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="theme-color" content="#0d1424">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
   <style>
     body { padding-bottom: 96px; }
@@ -298,7 +298,10 @@
       return fail("Código não reconhecido (" + t.length + " caracteres, começa com \"" + t.slice(0, 14) + "\"). No caixa, toque em Preços → Enviar para o site: o painel abre e aplica sozinho.");
     }
     let added = 0, updated = 0;
+    const IGN = new Set((cat.ignorarDoCaixa || []).map(norm));
+    let skipped = 0;
     (data.s || []).forEach((o) => {
+      if (IGN.has(norm(o.n))) { skipped++; return; } // variantes que no site são opção de outro serviço
       const k = CAT2TIPO[o.c]; if (!k || !cat.tipos[k]) return;
       const t = cat.tipos[k];
       const base = String(o.n || "").replace(new RegExp("\\s·\\s" + o.c + "$"), "");
@@ -321,7 +324,7 @@
     if (!added && !updated) return fail("Nenhum serviço de iPhone, Console ou Controle no código.");
     changed(); selectTab(tab);
     out.className = "msg ok";
-    out.textContent = `✓ ${added} novo(s) e ${updated} atualizado(s). Confira e toque em 💾 Salvar.`;
+    out.textContent = `✓ ${added} novo(s) e ${updated} atualizado(s)${skipped ? ` · ${skipped} ignorado(s) (já são opção de outro serviço)` : ""}. Confira e toque em 💾 Salvar.`;
     $("caixa-code").value = "";
   });
 

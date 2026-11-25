@@ -12,7 +12,10 @@ window.LOJA = {
   // Deixe vazio ("") enquanto não quiser publicar o endereço.
   // O endereço também pode ir só no e-mail de resposta.
   enderecoEnvio: "",
-  garantia: "", // Ex.: "修理後90日間 (90 dias após o reparo)"
+  garantia: "修理後90日間 · 90 dias após o reparo",
+  // Contato que aparece para o cliente (deixe "" para esconder o botão).
+  line: "",      // link de amigo do LINE, ex.: "https://line.me/ti/p/xxxxxxxx"
+  whatsapp: "",  // número com DDI, só dígitos, ex.: "819012345678"
 };
 
 /*
