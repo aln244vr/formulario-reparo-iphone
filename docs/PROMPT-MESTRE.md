@@ -23,7 +23,7 @@ Repositório: `aln244vr/formulario-reparo-iphone`. Branch de trabalho: `claude/o
 
 ## 1. Decisões já tomadas (não reabrir)
 
-1. **A marca é uma só: "Anova MM Tech".** Hoje o site do cliente diz "Yūsō Shūri · 郵送修理". Troque o nome em todos os títulos, cabeçalhos, rodapés, e-mails e `config.js`. "郵送修理 · Reparo por correio" passa a ser só a descrição do serviço.
+1. **A marca é uma só: "Anova MM Tech".** ✅ Feito no PR #13 (antes o site dizia "Yūsō Shūri"). Troque o nome em todos os títulos, cabeçalhos, rodapés, e-mails e `config.js`. "郵送修理 · Reparo por correio" passa a ser só a descrição do serviço.
 2. **Idiomas:**
    - Páginas do cliente: japonês e português, com o mesmo seletor que existe hoje.
    - Painel interno e painel do catálogo: só português.
@@ -204,8 +204,9 @@ Integração: o e-mail leva `ANOVA1:` com os nomes `caixa`, para o painel intern
 
 **Tokens únicos** (`assets/tokens.css` no site; copiados igual no artifact):
 - Cores:
-  - `--bg #f2f5fa`, `--surface #fff`, `--fg #0f172a`, `--muted #5b6475`, `--line #dbe1ea`;
-  - `--accent #1456e6`, `--ok #15803d`, `--warn #b45309`, `--bad #c62828`;
+  - `--bg #f2f5fa`, `--surface #fff`, `--fg #0d1424`, `--muted #586278`, `--line #d3dae7`;
+  - `--accent #1456e6`, `--ok #1f7a3d`, `--warn #a85a00`, `--teal #0b7a6b`, `--bad #c3202d`
+    (valores do painel Pedidos & Caixa, que é a referência);
   - modo escuro com os mesmos nomes.
 - Fontes:
   - títulos: `Barlow Condensed 700` em caixa alta;
@@ -256,7 +257,7 @@ Em cada fase:
 5. Publique o artifact ou abra o PR.
 6. **Pare e espere o "pode seguir".**
 
-**Fase 1 — Pedidos & Caixa (artifact)**
+**Fase 1 — Pedidos & Caixa (artifact)** ✅ concluída (v42)
 1. Aplicar os tokens únicos (cores, fontes, raio) sem mudar o layout que já foi aprovado.
 2. Conferir cada aba contra a seção 3A e corrigir as diferenças.
 3. Mensagens prontas com LINE além do WhatsApp (se o dono confirmar o canal).
