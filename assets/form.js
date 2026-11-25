@@ -416,7 +416,7 @@
     const honey = form.elements._honey.value;
     if (ENVIO.servico === "web3forms" && ENVIO.web3formsChave) {
       return { url: "https://api.web3forms.com/submit", body: JSON.stringify(Object.assign({
-        access_key: ENVIO.web3formsChave, subject, from_name: "Yūsō Shūri", botcheck: honey }, data)) };
+        access_key: ENVIO.web3formsChave, subject, from_name: "Anova MM Tech", botcheck: honey }, data)) };
     }
     return { url: "https://formsubmit.co/ajax/" + ENVIO.emailLoja, body: JSON.stringify(Object.assign({
       _subject: subject, _template: "table", _captcha: "false", _honey: honey }, data)) };
