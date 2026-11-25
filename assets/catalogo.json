@@ -211,10 +211,11 @@
         {
           "id": "hdmi",
           "pt": "Porta HDMI",
-          "jp": "HDMI端子修理",
+          "jp": "HDMIポート修理",
           "grupo": "reparo",
-          "dpt": "Sem imagem na TV, porta HDMI quebrada ou torta",
-          "djp": "テレビに映らない・HDMI端子の破損"
+          "dpt": "Reparo da porta HDMI para seu console voltar a exibir imagem e som na TV.",
+          "djp": "HDMIポートを修理し、テレビで映像と音声が出力されるようにします。",
+          "preco": 8000
         },
         {
           "id": "limpeza",
@@ -256,6 +257,14 @@
           "dpt": "Limpeza completa e metal líquido no PS5 para resfriar melhor e reduzir o barulho.",
           "djp": "PS5の内部を清掃し、液体金属を塗布して冷却効率を高め、動作音を抑えます。",
           "preco": 15000
+        },
+        {
+          "id": "selo-de-garantia-1000-11",
+          "pt": "Selo de garantia 1000/11000",
+          "jp": "保証シール貼付",
+          "grupo": "reparo",
+          "dpt": "Selo de garantia original aplicado no seu PS4 1000/1100 após o reparo.",
+          "djp": "PS4 1000/1100の本体に保証シールを貼付けします。"
         },
         {
           "id": "outro",
@@ -527,7 +536,7 @@
           "jp": "TMRアナログスティック交換 PS5",
           "grupo": "custom",
           "dpt": "Troca dos analógicos por modelo TMR eletromagnético antidrift, sem drift e com mais durabilidade.",
-          "djp": "ドリフトのない TMR 電磁式アナログスティック交換します。耐久性が向上します。",
+          "djp": "ドリフトのない TMR 電磁式アナログスティックに交換します。耐久性が向上します。",
           "preco": 4800
         },
         {
