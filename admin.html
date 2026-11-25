@@ -103,7 +103,7 @@
   <section class="card" id="caixa">
     <h2>📥 Receber do caixa</h2>
     <p class="hint" style="margin-top:-6px">No Pedidos &amp; caixa, toque em <b>Preços → Enviar para o site</b>. Depois cole aqui e toque em <b>Salvar</b>. Os serviços entram com nome, descrição e valor.</p>
-    <textarea id="caixa-code" rows="2" placeholder="ANOVACAT1:…"></textarea>
+    <textarea id="caixa-code" rows="2" placeholder="ANOVACAT1:…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
     <div class="row" style="margin-top:8px"><button type="button" class="btn btn-ghost shrink" id="caixa-go">Aplicar</button></div>
     <div class="msg" id="caixa-msg"></div>
   </section>
@@ -266,7 +266,9 @@
   const REPARO = /^(troca|reparo|conserto)|drift|bot(a|õ)es$|gatilhos \(|bateria do|conector|diagn|tela|vidro|camera|câmera|face id|agua|água|hdmi|leitor|fonte|hd \/ ssd|limpeza/i;
   $("caixa-go").addEventListener("click", () => {
     const out = $("caixa-msg"), raw = $("caixa-code").value;
-    const m = /ANOVACAT1:([A-Za-z0-9_\-\s]+)\./.exec(raw);
+    // o iPhone às vezes troca "--" por "—", "-" por "–" ou "..." por "…" ao colar: desfaz isso
+    const fixed = String(raw).replace(/\u2014/g, "--").replace(/[\u2010-\u2013\u2212]/g, "-").replace(/\u2026/g, "...").replace(/[\u200B-\u200D\uFEFF\u00A0]/g, "");
+    const m = /ANOVACAT1\s*:\s*([A-Za-z0-9_\-\s]+)/.exec(fixed);
     const fail = (t) => { out.textContent = t; out.className = "msg err"; };
     if (!cat) return fail("O catálogo ainda está carregando.");
     if (!m) return fail("Código não reconhecido. No caixa, toque em Preços → Enviar para o site e cole de novo.");
