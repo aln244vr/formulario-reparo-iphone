@@ -127,14 +127,9 @@
       </div>
 
       <div class="field">
-        <label for="street" class="sub"><span lang="ja">番地</span><span lang="pt">Número (番地)</span></label>
-        <input type="text" id="street" autocomplete="address-line1" data-ph-ja="例: 1-2-3" data-ph-pt="Ex.: 1-2-3" required>
-        <div class="msg err hidden" id="street-msg"><span lang="ja">番地（数字）を入力してください</span><span lang="pt">Coloque o número (番地) do endereço</span></div>
-      </div>
-
-      <div class="field">
-        <label for="building" class="sub"><span lang="ja">建物名・部屋番号</span><span lang="pt">Prédio e apto</span> <span class="hint">(<span lang="ja">任意</span><span lang="pt">se tiver</span>)</span></label>
-        <input type="text" id="building" autocomplete="address-line2" data-ph-ja="例: クリスタルオアシス 103" data-ph-pt="Ex.: クリスタルオアシス 103">
+        <label for="street" class="sub"><span lang="ja">番地・建物名・部屋番号</span><span lang="pt">Número, prédio e apto</span></label>
+        <input type="text" id="street" autocomplete="street-address" data-ph-ja="例: 4-33 クリスタルオアシス103号室" data-ph-pt="Ex.: 4-33 クリスタルオアシス103" required>
+        <div class="msg err hidden" id="street-msg"><span lang="ja">番地（例: 4-33）を入力してください</span><span lang="pt">Falta o número do endereço (番地), ex.: 4-33</span></div>
       </div>
 
       <div class="msg err hidden" id="form-msg"></div>
