@@ -78,12 +78,8 @@
       renderServices(); updateEstimate(); saveDraft();
     });
     const hasOpts = Array.isArray(s.opcoes) && s.opcoes.length;
-    // preço por modelo (tabela precos) também conta: mostra "a partir de" o menor
-    const porModelo = Object.values(TIPOS[tipo].precos || {}).map((v) => v && v[s.id]).filter((v) => typeof v === "number");
-    const varia = hasOpts || porModelo.length > 0;
-    const cands = (hasOpts ? s.opcoes.map((o) => o.preco) : [s.preco]).concat(porModelo).filter((v) => typeof v === "number");
-    const precoMin = cands.length ? Math.min(...cands) : undefined;
-    const precoTxt = typeof precoMin === "number" ? (varia && (cands.length > 1 || porModelo.length) ? t(yen(precoMin) + "〜", "a partir de " + yen(precoMin)) : yen(precoMin)) : (s.grupo === "custom" ? "" : t("お見積り", "sob orçamento"));
+    const precoMin = hasOpts ? Math.min(...s.opcoes.map((o) => (typeof o.preco === "number" ? o.preco : Infinity))) : s.preco;
+    const precoTxt = typeof precoMin === "number" && isFinite(precoMin) ? (hasOpts ? t(yen(precoMin) + "〜", "a partir de " + yen(precoMin)) : yen(precoMin)) : "";
     const desc = [t(s.djp, s.dpt), precoTxt].filter(Boolean).join(" · ");
     if (desc) {
       l.className = "svc-card";
@@ -478,17 +474,9 @@
   }
 
   // Carrega o catálogo e só então libera o formulário
-  document.querySelectorAll("#tipo button").forEach((b) => { b.disabled = true; });
-  $("tipo-msg").textContent = t("読み込み中…", "Carregando…"); $("tipo-msg").classList.remove("hidden", "err");
   fetch("assets/catalogo.json", { cache: "no-cache" })
     .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then((cat) => {
-      TIPOS = cat.tipos || {};
-      document.querySelectorAll("#tipo button").forEach((b) => { b.disabled = false; });
-      $("tipo-msg").classList.add("hidden", "err");
-      $("tipo-msg").innerHTML = '<span lang="ja">選んでください</span><span lang="pt">Escolha uma opção</span>';
-      applyLang(); loadDraft();
-    })
+    .then((cat) => { TIPOS = cat.tipos || {}; applyLang(); loadDraft(); })
     .catch(() => {
       $("tipo-msg").textContent = t("読み込みに失敗しました。ページを再読み込みしてください", "Erro ao carregar. Atualize a página.");
       $("tipo-msg").classList.remove("hidden");

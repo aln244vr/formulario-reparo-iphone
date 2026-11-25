@@ -517,6 +517,29 @@
           "preco": 1000
         },
         {
+          "id": "analogicos-tmr-k-silver--3",
+          "pt": "Analógicos TMR K-Silver · PS4",
+          "jp": "Analógicos TMR K-Silver · PS4",
+          "grupo": "custom",
+          "preco": 4600
+        },
+        {
+          "id": "analogicos-tmr-k-silver--4",
+          "pt": "Analógicos TMR K-Silver · Xbox",
+          "jp": "Analógicos TMR K-Silver · Xbox",
+          "grupo": "custom",
+          "preco": 4600
+        },
+        {
+          "id": "analogicos-tmr-k-silver--5",
+          "pt": "Analógicos TMR K-Silver · PS5",
+          "jp": "TMRアナログスティック交換 PS5",
+          "grupo": "custom",
+          "dpt": "Troca dos analógicos por modelo TMR eletromagnético antidrift, sem drift e com mais durabilidade.",
+          "djp": "ドリフトのない TMR 電磁式アナログスティックに交換します。耐久性が向上します。",
+          "preco": 4800
+        },
+        {
           "id": "outro",
           "pt": "Diagnóstico / Outro",
           "jp": "診断・その他",
@@ -527,10 +550,5 @@
       ],
       "precos": {}
     }
-  },
-  "ignorarDoCaixa": [
-    "Analógicos TMR K-Silver · PS5",
-    "Analógicos TMR K-Silver · PS4",
-    "Analógicos TMR K-Silver · Xbox"
-  ]
+  }
 }
