@@ -249,6 +249,15 @@
           "djp": "HDD・SSDの交換・増設（データは消える場合あり）"
         },
         {
+          "id": "ps5-limpeza-metal-liquid",
+          "pt": "PS5 Limpeza + Metal liquido",
+          "jp": "PS5 クリーニング＋液体金属塗布",
+          "grupo": "reparo",
+          "dpt": "Limpeza completa e metal líquido no PS5 para resfriar melhor e reduzir o barulho.",
+          "djp": "PS5の内部を清掃し、液体金属を塗布して冷却効率を高め、動作音を抑えます。",
+          "preco": 15000
+        },
+        {
           "id": "outro",
           "pt": "Diagnóstico / Outro",
           "jp": "診断・その他",
@@ -370,7 +379,8 @@
           "jp": "バッテリー交換",
           "grupo": "reparo",
           "dpt": "Bateria nova no lugar da original gasta",
-          "djp": "劣化したバッテリーを新品に交換"
+          "djp": "劣化したバッテリーを新品に交換",
+          "preco": 1000
         },
         {
           "id": "conectorc",
@@ -383,10 +393,11 @@
         {
           "id": "paddles-rise4-preto",
           "pt": "Paddles RISE4 · preto",
-          "jp": "RISE4 背面パドル（黒）",
+          "jp": "PS5用 RISE4 背面パドル増設（ブラック）",
           "grupo": "custom",
-          "dpt": "4 botões traseiros remapeáveis (kit RISE4), grip emborrachado preto",
-          "djp": "背面ボタン4つ（RISE4キット・割り当て変更可）黒ラバーグリップ"
+          "dpt": "Adicione 4 botões traseiros ao seu controle PS5 e remapeie os comandos como preferir.",
+          "djp": "PS5コントローラーに背面ボタンを4つ追加し、お好みのボタン配置に設定できます。",
+          "preco": 4000
         },
         {
           "id": "paddles-rise4-branco",
@@ -394,7 +405,8 @@
           "jp": "RISE4 背面パドル（白・シェル付き）",
           "grupo": "custom",
           "dpt": "4 botões traseiros remapeáveis (kit RISE4) + carcaça traseira branca nova",
-          "djp": "背面ボタン4つ（RISE4キット）＋白い背面シェル"
+          "djp": "背面ボタン4つ（RISE4キット）＋白い背面シェル",
+          "preco": 4000
         },
         {
           "id": "capa",
@@ -426,7 +438,8 @@
           "jp": "クリックキット（ボタン＋トリガー）",
           "grupo": "custom",
           "dpt": "Botões e gatilhos com clique curto, estilo mouse: resposta mais rápida",
-          "djp": "ボタンとトリガーをマウスのようなクリック式に（反応が速い）"
+          "djp": "ボタンとトリガーをマウスのようなクリック式に（反応が速い）",
+          "preco": 4500
         },
         {
           "id": "trava",
@@ -459,6 +472,63 @@
           "grupo": "custom",
           "dpt": "Textura antiderrapante nas laterais",
           "djp": "側面に滑り止め加工"
+        },
+        {
+          "id": "analogicos-tmr-k-silver-",
+          "pt": "Analógicos TMR K-Silver · Switch Pro",
+          "jp": "TMRアナログスティック交換 Switch Pro",
+          "grupo": "custom",
+          "dpt": "Troca dos analógicos por modelo TMR eletromagnético antidrift, sem drift e com mais durabilidade.",
+          "djp": "ドリフトのない TMR 電磁式アナログスティックに交換します。耐久性が向上します。",
+          "preco": 5000
+        },
+        {
+          "id": "analogicos-tmr-k-silver--2",
+          "pt": "Analógicos TMR K-Silver · Switch Lite/OLED",
+          "jp": "TMRアナログスティック交換 Switch Lite/OLED",
+          "grupo": "custom",
+          "dpt": "Troca dos analógicos por modelo TMR antidrift, eliminando o drift e dando mais precisão e durabilidade.",
+          "djp": "ドリフトを解消する TMR 方式のアナログスティックに交換します。精度と耐久性が向上します。",
+          "preco": 4500
+        },
+        {
+          "id": "troca-de-bateria-do-cont",
+          "pt": "Troca de bateria do controle PS5",
+          "jp": "PS5コントローラー バッテリー交換",
+          "grupo": "reparo",
+          "dpt": "Troca da bateria interna do controle PS5 por uma nova de 2000mAh, devolvendo a autonomia de uso.",
+          "djp": "PS5コントローラーの内蔵バッテリーを新品の2000mAhに交換し、使用時間を回復します。",
+          "preco": 2566
+        },
+        {
+          "id": "limpeza-2",
+          "pt": "Limpeza",
+          "jp": "Limpeza",
+          "grupo": "reparo",
+          "preco": 1000
+        },
+        {
+          "id": "analogicos-tmr-k-silver--3",
+          "pt": "Analógicos TMR K-Silver · PS4",
+          "jp": "Analógicos TMR K-Silver · PS4",
+          "grupo": "custom",
+          "preco": 4600
+        },
+        {
+          "id": "analogicos-tmr-k-silver--4",
+          "pt": "Analógicos TMR K-Silver · Xbox",
+          "jp": "Analógicos TMR K-Silver · Xbox",
+          "grupo": "custom",
+          "preco": 4600
+        },
+        {
+          "id": "analogicos-tmr-k-silver--5",
+          "pt": "Analógicos TMR K-Silver · PS5",
+          "jp": "TMRアナログスティック交換 PS5",
+          "grupo": "custom",
+          "dpt": "Troca dos analógicos por modelo TMR eletromagnético antidrift, sem drift e com mais durabilidade.",
+          "djp": "ドリフトのない TMR 電磁式アナログスティック交換します。耐久性が向上します。",
+          "preco": 4800
         },
         {
           "id": "outro",
