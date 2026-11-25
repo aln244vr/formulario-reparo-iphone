@@ -271,7 +271,7 @@ Em cada fase:
    - apagar os testes depois.
 6. Não mudar o formato dos dados. Se precisar, escrever migração que converte os registros antigos ao ler.
 
-**Fase 2 — Formulário + Catálogo (PR no repositório)**
+**Fase 2 — Formulário + Catálogo (PR no repositório)** ✅ concluída
 1. Marca "Anova MM Tech" em `config.js`, `index.html`, `admin.html`, `confirmacao.html` e README.
 2. Criar `assets/tokens.css` e fazer `style.css` usar os tokens (mesma identidade do painel).
 3. Formulário: preços "a partir de" / "Sob orçamento", contato LINE/WhatsApp e estado de carregamento.
@@ -283,7 +283,7 @@ Em cada fase:
    - código `ANOVA1` lido pelo `parseSiteOrder` do caixa;
    - painel aplicando `#ANOVACAT1` e salvando (GitHub mockado).
 
-**Fase 3 — Guia/FAQ e integração final (PR)**
+**Fase 3 — Guia/FAQ e integração final (PR)** ✅ concluída (falta só o LINE/WhatsApp em config.js)
 1. Guia genérico para os 3 tipos, FAQ novo, tabela de preços por opção e contato.
 2. `confirmacao.html` com o mesmo visual e o contato.
 3. Ida e volta completa: catálogo → formulário → e-mail → caixa → estoque → relatório, e preços do caixa → site.
