@@ -6,7 +6,7 @@
  *  assets/catalogo.json e são editados pelo painel admin.html.
  */
 window.LOJA = {
-  nome: "Yūsō Shūri",
+  nome: "Anova MM Tech",
   // Texto mostrado na página de confirmação e no guia de envio.
   prazoResposta: "24時間以内 (em até 24 horas)",
   // Deixe vazio ("") enquanto não quiser publicar o endereço.
