@@ -281,6 +281,16 @@
             "Xbox Elite Series 2",
             "Xbox 360"
           ]
+        },
+        {
+          "grupo": "Nintendo Switch",
+          "itens": [
+            "Joy-Con (L)",
+            "Joy-Con (R)",
+            "Joy-Con (par L+R)",
+            "Switch Pro Controller",
+            "Joy-Con 2 (Switch 2)"
+          ]
         }
       ],
       "servicos": [
@@ -309,6 +319,32 @@
               "djp": "TMR磁気スティック：ドリフトなし・高精度・省電力（2本交換）",
               "preco": 4600,
               "caixa": "Analógicos TMR K-Silver"
+            }
+          ]
+        },
+        {
+          "id": "joycon",
+          "pt": "Joy-Con drift (Switch)",
+          "jp": "ジョイコン スティック交換（ドリフト）",
+          "dpt": "Joy-Con mexendo sozinho? Troca do analógico. Escolha o tipo",
+          "djp": "勝手に動くジョイコンのスティック交換。種類を選んでください",
+          "grupo": "reparo",
+          "opcoes": [
+            {
+              "id": "comum",
+              "pt": "Analógico comum",
+              "jp": "通常スティック",
+              "dpt": "Peça nova igual à original. Troca de 1 analógico",
+              "djp": "純正同等の新品スティック（1本交換）",
+              "caixa": "Joy-Con · analógico comum"
+            },
+            {
+              "id": "hall",
+              "pt": "Hall Effect",
+              "jp": "ホールエフェクト",
+              "dpt": "Magnético: não dá mais drift. Troca de 1 analógico",
+              "djp": "磁気スティック：ドリフトしない（1本交換）",
+              "caixa": "Joy-Con · Hall Effect"
             }
           ]
         },
