@@ -1,5 +1,5 @@
 /*
- * Formulário de pedido em telas: 1 aparelho → 2 serviço (e opção) → 3 modelo → 4 dados.
+ * Formulário de pedido em telas: 1 aparelho → 2 modelo → 3 serviço (e opção, só os do modelo) → 4 dados.
  * Modelos, serviços, opções e preços vêm de assets/catalogo.json (editado pelo admin.html).
  */
 (function () {
@@ -33,8 +33,8 @@
     const b = e.target.closest("[data-next]");
     if (!b) return;
     const n = +b.dataset.next;
-    if (n === 3 && !Object.keys(sel).length) { $("services-msg").classList.remove("hidden"); return; }
-    if (n === 4 && !modelText()) { $("model-msg").classList.remove("hidden"); return; }
+    if (n === 3 && !modelText()) { $("model-msg").classList.remove("hidden"); return; }
+    if (n === 4 && !Object.keys(sel).length) { $("services-msg").classList.remove("hidden"); return; }
     go(n);
   });
 
@@ -63,9 +63,32 @@
   }
 
   // ---------- 2. Serviços e opções ----------
-  const servicos = () => (tipo ? TIPOS[tipo].servicos || [] : []);
+  // "modelos" (opcional) no serviço ou na opção: lista de modelos ou de séries (ex.: "PlayStation") em que vale.
+  // Sem modelo escolhido ou "Outro / não sei": mostra tudo.
+  function applies(x) {
+    if (!x || !Array.isArray(x.modelos) || !x.modelos.length) return true;
+    const m = model.value;
+    if (!m || m === OUTRO) return true;
+    if (x.modelos.includes(m)) return true;
+    const g = ((TIPOS[tipo] && TIPOS[tipo].modelos) || []).find((g) => (g.itens || []).includes(m));
+    return !!g && x.modelos.includes(g.grupo);
+  }
+  const todosServicos = () => (tipo ? TIPOS[tipo].servicos || [] : []);
+  const servicos = () => todosServicos().filter(applies);
   const svcById = (id) => servicos().find((x) => x.id === id);
-  const optOf = (s) => (s && Array.isArray(s.opcoes) && s.opcoes.length ? (s.opcoes.find((o) => o.id === sel[s.id]) || s.opcoes[0]) : null);
+  const opcoesDe = (s) => (s && Array.isArray(s.opcoes) ? s.opcoes.filter(applies) : []);
+  const optOf = (s) => { const L = opcoesDe(s); return L.length ? (L.find((o) => o.id === sel[s.id]) || L[0]) : null; };
+  // preço da opção pode mudar por modelo (ex.: TMR do PS5 ¥4,800, do PS4 ¥4,600)
+  const optPreco = (o) => (o && o.precoModelo && typeof o.precoModelo[model.value] === "number" ? o.precoModelo[model.value] : o && o.preco);
+  // tira serviços/opções que não servem para o modelo escolhido
+  function pruneSel() {
+    Object.keys(sel).forEach((id) => {
+      const s = svcById(id);
+      if (!s) { delete sel[id]; return; }
+      const L = opcoesDe(s);
+      if (L.length && !L.some((o) => o.id === sel[id])) sel[id] = L[0].id;
+    });
+  }
   const priceTxt = (v) => (typeof v === "number" ? yen(v) : "");
 
   function card(s) {
@@ -73,12 +96,12 @@
     const c = document.createElement("input");
     c.type = "checkbox"; c.value = s.id; c.checked = !!sel[s.id];
     c.addEventListener("change", () => {
-      if (c.checked) sel[s.id] = s.opcoes && s.opcoes.length ? s.opcoes[0].id : true; else delete sel[s.id];
+      if (c.checked) sel[s.id] = opcoesDe(s).length ? opcoesDe(s)[0].id : true; else delete sel[s.id];
       $("services-msg").classList.add("hidden");
       renderServices(); updateEstimate(); saveDraft();
     });
-    const hasOpts = Array.isArray(s.opcoes) && s.opcoes.length;
-    const precoMin = hasOpts ? Math.min(...s.opcoes.map((o) => (typeof o.preco === "number" ? o.preco : Infinity))) : s.preco;
+    const hasOpts = opcoesDe(s).length > 0;
+    const precoMin = hasOpts ? Math.min(...opcoesDe(s).map((o) => (typeof optPreco(o) === "number" ? optPreco(o) : Infinity))) : s.preco;
     const precoTxt = typeof precoMin === "number" && isFinite(precoMin) ? (hasOpts ? t(yen(precoMin) + "〜", "a partir de " + yen(precoMin)) : yen(precoMin)) : "";
     const desc = [t(s.djp, s.dpt), precoTxt].filter(Boolean).join(" · ");
     if (desc) {
@@ -96,12 +119,12 @@
     if (hasOpts && sel[s.id]) {
       const box = document.createElement("div");
       box.className = "svc-opts";
-      s.opcoes.forEach((o) => {
+      opcoesDe(s).forEach((o) => {
         const ol = document.createElement("label"); ol.className = "opt";
         const r = document.createElement("input"); r.type = "radio"; r.name = "opt-" + s.id; r.checked = (optOf(s) || {}).id === o.id;
         r.addEventListener("change", () => { sel[s.id] = o.id; updateEstimate(); saveDraft(); });
         const sp = document.createElement("span");
-        const ob = document.createElement("b"); ob.textContent = t(o.jp, o.pt) + (typeof o.preco === "number" ? " · " + yen(o.preco) : "");
+        const ob = document.createElement("b"); ob.textContent = t(o.jp, o.pt) + (typeof optPreco(o) === "number" ? " · " + yen(optPreco(o)) : "");
         sp.append(ob);
         const od = t(o.djp, o.dpt); if (od) { const sm = document.createElement("small"); sm.textContent = od; sp.append(sm); }
         ol.append(r, sp); box.append(ol);
@@ -171,8 +194,8 @@
       $("model-msg").classList.add("hidden");
       document.querySelectorAll("#models button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
       $("other-model-wrap").classList.toggle("hidden", value !== OUTRO);
-      saveDraft();
-      if (value === OUTRO) $("other-model").focus(); else go(4);
+      pruneSel(); renderServices(); updateEstimate(); saveDraft();
+      if (value === OUTRO) $("other-model").focus(); else go(3);
     });
     return b;
   }
@@ -183,7 +206,7 @@
       const s = svcById(id); if (!s) return null;
       const o = optOf(s);
       const table = ((TIPOS[tipo].precos || {})[model.value]) || {};
-      let v = o ? o.preco : table[id];
+      let v = o ? optPreco(o) : table[id];
       if (typeof v !== "number") v = typeof s.preco === "number" ? s.preco : undefined;
       return { s, o, v };
     }).filter(Boolean);
@@ -192,7 +215,7 @@
     const box = $("estimate"), L = tipo ? lineItems() : [];
     let total = 0, unknown = false;
     L.forEach((l) => { if (typeof l.v === "number") total += l.v; else unknown = true; });
-    if (step < 2 || !L.length || !total) { box.classList.add("hidden"); return; }
+    if (step < 3 || !L.length || !total) { box.classList.add("hidden"); return; }
     $("estimate-value").textContent = yen(total) + (unknown ? " 〜" : "");
     box.classList.remove("hidden");
   }
@@ -208,8 +231,8 @@
       if (back) { const x = document.createElement("button"); x.type = "button"; x.textContent = t("変更", "alterar"); x.style.marginLeft = "8px"; x.onclick = () => go(back); p.append(x); }
       box.append(p);
     };
-    line(t("修理内容", "Serviço"), lineItems().map((l) => t(l.s.jp, l.s.pt) + (l.o ? " (" + t(l.o.jp, l.o.pt) + ")" : "")).join(" + "), 2);
-    line(t("機種", "Modelo"), modelText(), 3);
+    line(t("機種", "Modelo"), modelText(), 2);
+    line(t("修理内容", "Serviço"), lineItems().map((l) => t(l.s.jp, l.s.pt) + (l.o ? " (" + t(l.o.jp, l.o.pt) + ")" : "")).join(" + "), 3);
   }
 
   // ---------- Números ----------
@@ -339,10 +362,10 @@
       sel = d.sel && typeof d.sel === "object" ? d.sel : {};
       Object.keys(sel).forEach((id) => { if (!svcById(id)) delete sel[id]; });
       model.value = d.model || "";
-      renderServices(); renderModels();
+      pruneSel(); renderServices(); renderModels();
       let n = Math.min(Math.max(+d.step || 2, 2), 4);
-      if (n >= 3 && !Object.keys(sel).length) n = 2;
-      if (n === 4 && !modelText()) n = 3;
+      if (n >= 3 && !modelText()) n = 2;
+      if (n === 4 && !Object.keys(sel).length) n = 3;
       go(n, true);
     } else go(1, true);
   }
@@ -356,8 +379,8 @@
   const submitBtn = $("submit-btn");
   function validate() {
     if (!tipo) { go(1); return $("tipo"); }
-    if (!Object.keys(sel).length) { go(2); $("services-msg").classList.remove("hidden"); return $("services"); }
-    if (!modelText()) { go(3); $("model-msg").classList.remove("hidden"); return $("models"); }
+    if (!modelText()) { go(2); $("model-msg").classList.remove("hidden"); return $("models"); }
+    if (!Object.keys(sel).length) { go(3); $("services-msg").classList.remove("hidden"); return $("services"); }
     let first = null;
     const bad = (el) => { if (!first) first = el; };
     [$("name"), $("phone"), $("email"), $("zip"), $("pref"), $("city"), $("street")].forEach((el) => {
@@ -403,7 +426,7 @@
     const j = {
       v: 1, d: localDate(), t: tipo, m: data.Modelo,
       // com opção, vai o nome do serviço do caixa (ex.: "Analógicos TMR K-Silver")
-      s: lineItems().map((l) => (l.o ? l.o.caixa || `${l.s.pt} · ${l.o.pt}` : l.s.pt)),
+      s: lineItems().map((l) => (l.o ? (l.o.caixaModelo && l.o.caixaModelo[model.value]) || l.o.caixa || `${l.s.pt} · ${l.o.pt}` : l.s.pt)),
       e: est > 0 ? est : null, p: data.Problema === "-" ? "" : data.Problema,
       n: data.Nome, tel: data.Telefone, mail: data.email, end: data.Endereco, l: lang(),
     };

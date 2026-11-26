@@ -306,6 +306,16 @@
       let opt = null;
       t.servicos.forEach((x) => (x.opcoes || []).forEach((op) => { if (!opt && op.caixa && norm(op.caixa) === norm(o.n)) opt = op; }));
       if (opt) { if (typeof o.v === "number" && o.v > 0) opt.preco = o.v; updated++; return; }
+      // nome do caixa ligado ao preço de um modelo (ex.: "Analógicos TMR K-Silver · PS5" → TMR no DualSense)
+      let hit = false;
+      t.servicos.forEach((x) => (x.opcoes || []).forEach((op) => {
+        Object.entries(op.caixaModelo || {}).forEach(([m, nm]) => {
+          if (norm(nm) !== norm(o.n)) return;
+          hit = true;
+          if (typeof o.v === "number" && o.v > 0) { op.precoModelo = op.precoModelo || {}; op.precoModelo[m] = o.v; }
+        });
+      }));
+      if (hit) { updated++; return; }
       let sv = t.servicos.find((x) => norm(x.pt) === norm(o.n) || norm(x.pt) === norm(base));
       if (!sv) {
         sv = { id: newId(slug(base)), pt: base, jp: o.j || base, grupo: k === "controle" && !REPARO.test(base) ? "custom" : "reparo" };
@@ -327,9 +337,21 @@
 
   const openSvc = new Set(); // serviços abertos para editar (os outros ficam numa linha só)
   const yenTxt = (v) => (typeof v === "number" ? "¥" + v.toLocaleString("ja-JP") : "");
+  const precoOpTxt = (o) => {
+    const v = Object.values(o.precoModelo || {}).concat(typeof o.preco === "number" ? [o.preco] : []).filter((x) => typeof x === "number");
+    if (!v.length) return "";
+    const a = Math.min(...v), b = Math.max(...v);
+    return " " + (a === b ? yenTxt(a) : yenTxt(a) + "–" + yenTxt(b).slice(1));
+  };
+  // "Vale para": lista de modelos ou séries, separados por vírgula (vazio = todos)
+  function modelosInput(obj) {
+    return el("input", { type: "text", class: "grow", value: (obj.modelos || []).join(", "), placeholder: "Vale para (vazio = todos os modelos; ex.: PlayStation, Switch Pro Controller)",
+      oninput: (e) => { const L = e.target.value.split(",").map((x) => x.trim()).filter(Boolean); if (L.length) obj.modelos = L; else delete obj.modelos; changed(); } });
+  }
   function svcSummary(s) {
-    if (Array.isArray(s.opcoes) && s.opcoes.length) return s.opcoes.map((o) => o.pt + (typeof o.preco === "number" ? " " + yenTxt(o.preco) : "")).join(" · ");
-    return typeof s.preco === "number" ? yenTxt(s.preco) : "sem valor";
+    const vale = Array.isArray(s.modelos) && s.modelos.length ? " · só " + s.modelos.join(", ") : "";
+    if (Array.isArray(s.opcoes) && s.opcoes.length) return s.opcoes.map((o) => o.pt + precoOpTxt(o)).join(" · ") + vale;
+    return (typeof s.preco === "number" ? yenTxt(s.preco) : "sem valor") + vale;
   }
   function numInput(obj, key, ph) {
     return el("input", { type: "text", inputMode: "numeric", class: "grow", value: typeof obj[key] === "number" ? String(obj[key]) : "", placeholder: ph,
@@ -355,7 +377,8 @@
           el("div", { class: "item" }, txtInput(s, "pt", "Nome em português", () => { head.querySelector("b").textContent = s.pt; renderPrices(); })),
           el("div", { class: "item" }, txtInput(s, "jp", "日本語の名前")),
           el("div", { class: "item" }, txtInput(s, "dpt", "Descrição curta (ex.: 4 botões traseiros)")),
-          el("div", { class: "item" }, txtInput(s, "djp", "説明（日本語）")));
+          el("div", { class: "item" }, txtInput(s, "djp", "説明（日本語）")),
+          el("div", { class: "item" }, modelosInput(s)));
         if (!(Array.isArray(s.opcoes) && s.opcoes.length)) card.append(el("div", { class: "item" }, numInput(s, "preco", "Valor no site ¥ (vazio = sob orçamento)")));
         // opções do serviço (ex.: Hall Effect padrão / TMR)
         const opts = el("div", { class: "opts" });
@@ -365,7 +388,11 @@
             el("div", { class: "item" }, txtInput(o, "jp", "日本語")),
             el("div", { class: "item" }, txtInput(o, "dpt", "Descrição da opção")),
             el("div", { class: "item" }, txtInput(o, "djp", "説明（日本語）")),
-            el("div", { class: "item" }, numInput(o, "preco", "Valor ¥"), txtInput(o, "caixa", "Nome no caixa"))));
+            el("div", { class: "item" }, numInput(o, "preco", "Valor ¥"), txtInput(o, "caixa", "Nome no caixa")),
+            el("div", { class: "item" }, modelosInput(o)),
+            ...Object.keys(o.precoModelo || {}).map((m) => el("div", { class: "item" },
+              el("span", { textContent: m, style: "flex:1;min-width:0;font-size:.85rem;color:var(--muted)" }),
+              numInput(o.precoModelo, m, "Valor ¥ neste modelo")))));
         });
         opts.append(el("button", { type: "button", class: "btn add", textContent: "+ Opção (ex.: tipo de peça)", style: "padding:7px;font-size:.85rem",
           onclick: () => { s.opcoes = s.opcoes || []; s.opcoes.push({ id: newOptId(s), pt: "", jp: "" }); if (s.opcoes.length === 1) delete s.preco; changed(); renderServices(); } }));

@@ -140,7 +140,14 @@
       /* serviços com opções (ex.: Hall Effect / TMR) viram uma linha por opção */
       const fixos = [];
       (tp.servicos || []).forEach((s) => {
-        if (Array.isArray(s.opcoes) && s.opcoes.length) s.opcoes.forEach((o) => { if (typeof o.preco === "number") fixos.push({ pt: s.pt + " · " + o.pt, jp: s.jp + " · " + o.jp, dpt: o.dpt, preco: o.preco }); });
+        if (Array.isArray(s.opcoes) && s.opcoes.length) s.opcoes.forEach((o) => {
+          // preço por modelo vira uma linha por preço diferente (ex.: TMR PS5 / PS4 / Switch Pro)
+          const pm = o.precoModelo || {}, byV = {};
+          Object.keys(pm).forEach((m) => { (byV[pm[m]] = byV[pm[m]] || []).push(m); });
+          const vs = Object.keys(byV);
+          if (vs.length) vs.sort((a, b) => a - b).forEach((v) => fixos.push({ pt: s.pt + " · " + o.pt, jp: s.jp + " · " + o.jp, dpt: byV[v].join(" / "), preco: +v }));
+          else if (typeof o.preco === "number") fixos.push({ pt: s.pt + " · " + o.pt, jp: s.jp + " · " + o.jp, dpt: o.dpt, preco: o.preco });
+        });
         else if (typeof s.preco === "number") fixos.push(s);
       });
       if (fixos.length) {

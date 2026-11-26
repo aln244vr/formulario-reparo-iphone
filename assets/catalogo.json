@@ -336,8 +336,37 @@
               "dpt": "Magnéticos TMR: sem drift, mais precisos e econômicos na bateria. Troca dos 2",
               "djp": "TMR磁気スティック：ドリフトなし・高精度・省電力（2本交換）",
               "preco": 4600,
-              "caixa": "Analógicos TMR K-Silver"
+              "caixa": "Analógicos TMR K-Silver",
+              "modelos": [
+                "DualSense (PS5)",
+                "DualSense Edge (PS5)",
+                "DUALSHOCK 4 (PS4)",
+                "Xbox Series",
+                "Xbox One",
+                "Switch Pro Controller"
+              ],
+              "precoModelo": {
+                "DualSense (PS5)": 4800,
+                "DualSense Edge (PS5)": 4800,
+                "DUALSHOCK 4 (PS4)": 4600,
+                "Xbox Series": 4600,
+                "Xbox One": 4600,
+                "Switch Pro Controller": 5000
+              },
+              "caixaModelo": {
+                "DualSense (PS5)": "Analógicos TMR K-Silver · PS5",
+                "DualSense Edge (PS5)": "Analógicos TMR K-Silver · PS5",
+                "DUALSHOCK 4 (PS4)": "Analógicos TMR K-Silver · PS4",
+                "Xbox Series": "Analógicos TMR K-Silver · Xbox",
+                "Xbox One": "Analógicos TMR K-Silver · Xbox",
+                "Switch Pro Controller": "Analógicos TMR K-Silver · Switch Pro"
+              }
             }
+          ],
+          "modelos": [
+            "PlayStation",
+            "Xbox",
+            "Switch Pro Controller"
           ]
         },
         {
@@ -363,7 +392,27 @@
               "dpt": "Magnético: não dá mais drift. Troca de 1 analógico",
               "djp": "磁気スティック：ドリフトしない（1本交換）",
               "caixa": "Joy-Con · Hall Effect"
+            },
+            {
+              "id": "tmr",
+              "pt": "TMR K-Silver",
+              "jp": "TMR K-Silver",
+              "dpt": "Magnético TMR: sem drift e mais preciso",
+              "djp": "TMR磁気式：ドリフトしにくく高精度",
+              "preco": 4500,
+              "caixa": "Analógicos TMR K-Silver · Switch Lite/OLED",
+              "modelos": [
+                "Joy-Con (L)",
+                "Joy-Con (R)",
+                "Joy-Con (par L+R)"
+              ]
             }
+          ],
+          "modelos": [
+            "Joy-Con (L)",
+            "Joy-Con (R)",
+            "Joy-Con (par L+R)",
+            "Joy-Con 2 (Switch 2)"
           ]
         },
         {
@@ -406,7 +455,11 @@
           "grupo": "custom",
           "dpt": "Adicione 4 botões traseiros ao seu controle PS5 e remapeie os comandos como preferir.",
           "djp": "PS5コントローラーに背面ボタンを4つ追加し、お好みのボタン配置に設定できます。",
-          "preco": 4000
+          "preco": 4000,
+          "modelos": [
+            "DualSense (PS5)",
+            "DualSense Edge (PS5)"
+          ]
         },
         {
           "id": "paddles-rise4-branco",
@@ -415,7 +468,11 @@
           "grupo": "custom",
           "dpt": "4 botões traseiros remapeáveis (kit RISE4) + carcaça traseira branca nova",
           "djp": "背面ボタン4つ（RISE4キット）＋白い背面シェル",
-          "preco": 4000
+          "preco": 4000,
+          "modelos": [
+            "DualSense (PS5)",
+            "DualSense Edge (PS5)"
+          ]
         },
         {
           "id": "capa",
@@ -448,7 +505,11 @@
           "grupo": "custom",
           "dpt": "Botões e gatilhos com clique curto, estilo mouse: resposta mais rápida",
           "djp": "ボタンとトリガーをマウスのようなクリック式に（反応が速い）",
-          "preco": 4500
+          "preco": 4500,
+          "modelos": [
+            "DualSense (PS5)",
+            "DualSense Edge (PS5)"
+          ]
         },
         {
           "id": "trava",
@@ -483,31 +544,17 @@
           "djp": "側面に滑り止め加工"
         },
         {
-          "id": "analogicos-tmr-k-silver-",
-          "pt": "Analógicos TMR K-Silver · Switch Pro",
-          "jp": "TMRアナログスティック交換 Switch Pro",
-          "grupo": "custom",
-          "dpt": "Troca dos analógicos por modelo TMR eletromagnético antidrift, sem drift e com mais durabilidade.",
-          "djp": "ドリフトのない TMR 電磁式アナログスティックに交換します。耐久性が向上します。",
-          "preco": 5000
-        },
-        {
-          "id": "analogicos-tmr-k-silver--2",
-          "pt": "Analógicos TMR K-Silver · Switch Lite/OLED",
-          "jp": "TMRアナログスティック交換 Switch Lite/OLED",
-          "grupo": "custom",
-          "dpt": "Troca dos analógicos por modelo TMR antidrift, eliminando o drift e dando mais precisão e durabilidade.",
-          "djp": "ドリフトを解消する TMR 方式のアナログスティックに交換します。精度と耐久性が向上します。",
-          "preco": 4500
-        },
-        {
           "id": "troca-de-bateria-do-cont",
           "pt": "Troca de bateria do controle PS5",
           "jp": "PS5コントローラー バッテリー交換",
           "grupo": "reparo",
           "dpt": "Troca da bateria interna do controle PS5 por uma nova de 2000mAh, devolvendo a autonomia de uso.",
           "djp": "PS5コントローラーの内蔵バッテリーを新品の2000mAhに交換し、使用時間を回復します。",
-          "preco": 2566
+          "preco": 2566,
+          "modelos": [
+            "DualSense (PS5)",
+            "DualSense Edge (PS5)"
+          ]
         },
         {
           "id": "limpeza-2",
@@ -515,29 +562,6 @@
           "jp": "Limpeza",
           "grupo": "reparo",
           "preco": 1000
-        },
-        {
-          "id": "analogicos-tmr-k-silver--3",
-          "pt": "Analógicos TMR K-Silver · PS4",
-          "jp": "Analógicos TMR K-Silver · PS4",
-          "grupo": "custom",
-          "preco": 4600
-        },
-        {
-          "id": "analogicos-tmr-k-silver--4",
-          "pt": "Analógicos TMR K-Silver · Xbox",
-          "jp": "Analógicos TMR K-Silver · Xbox",
-          "grupo": "custom",
-          "preco": 4600
-        },
-        {
-          "id": "analogicos-tmr-k-silver--5",
-          "pt": "Analógicos TMR K-Silver · PS5",
-          "jp": "TMRアナログスティック交換 PS5",
-          "grupo": "custom",
-          "dpt": "Troca dos analógicos por modelo TMR eletromagnético antidrift, sem drift e com mais durabilidade.",
-          "djp": "ドリフトのない TMR 電磁式アナログスティックに交換します。耐久性が向上します。",
-          "preco": 4800
         },
         {
           "id": "outro",
