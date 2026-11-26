@@ -24,3 +24,8 @@ e o site atualiza em 1–2 minutos.
 ## Envio dos pedidos
 Os pedidos vão pelo [Web3Forms](https://web3forms.com) para o e-mail da conta dona da chave
 configurada em `assets/config.js`.
+
+## Serviços por modelo (catalogo.json)
+- `modelos` (opcional) num serviço ou numa opção: lista de modelos ou séries (ex.: `"PlayStation"`, `"Switch Pro Controller"`) em que ele aparece. Sem `modelos` = aparece para todos.
+- `precoModelo` numa opção: preço diferente por modelo (ex.: TMR no DualSense ¥4,800, no DUALSHOCK 4 ¥4,600).
+- `caixaModelo` numa opção: nome do item no Pedidos & caixa para cada modelo (ex.: "Analógicos TMR K-Silver · PS5"). O pedido do site manda esse nome, e o "Receber do caixa" atualiza o preço do modelo certo.

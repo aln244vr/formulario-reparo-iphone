@@ -58,8 +58,20 @@
       <div class="msg err hidden" id="tipo-msg"><span lang="ja">選んでください</span><span lang="pt">Escolha uma opção</span></div>
     </section>
 
-    <!-- 2. Serviço (com opções, ex.: Hall Effect ou TMR) -->
+    <!-- 2. Modelo -->
     <section class="wz" data-step="2" hidden>
+      <h2 class="wz-title"><span lang="ja">機種は？</span><span lang="pt">Qual é o modelo?</span></h2>
+      <input type="hidden" id="model">
+      <div id="models"></div>
+      <div class="field hidden" id="other-model-wrap" style="margin-top:12px">
+        <input type="text" id="other-model" data-ph-ja="機種名を入力" data-ph-pt="Digite o modelo">
+        <button type="button" class="btn btn-primary" data-next="3" style="margin-top:10px"><span lang="ja">次へ</span><span lang="pt">Próximo</span> ›</button>
+      </div>
+      <div class="msg err hidden" id="model-msg"><span lang="ja">機種を選んでください</span><span lang="pt">Escolha o modelo</span></div>
+    </section>
+
+    <!-- 3. Serviço (só os que servem para o modelo; com opções, ex.: Hall Effect ou TMR) -->
+    <section class="wz" data-step="3" hidden>
       <h2 class="wz-title"><span lang="ja">修理内容は？</span><span lang="pt">Qual serviço?</span></h2>
       <p class="hint" style="margin:-6px 0 12px"><span lang="ja">複数選べます</span><span lang="pt">Pode escolher mais de um</span></p>
       <div class="chips" id="services"></div>
@@ -68,19 +80,7 @@
         <label for="problem"><span lang="ja">症状</span><span lang="pt">O que aconteceu?</span> <span class="hint">(<span lang="ja">任意</span><span lang="pt">opcional</span>)</span></label>
         <textarea id="problem" rows="2" data-ph-ja="例: 落としてから画面がつかない" data-ph-pt="Ex.: Caiu e a tela não acende"></textarea>
       </div>
-      <button type="button" class="btn btn-primary" data-next="3"><span lang="ja">次へ</span><span lang="pt">Próximo</span> ›</button>
-    </section>
-
-    <!-- 3. Modelo -->
-    <section class="wz" data-step="3" hidden>
-      <h2 class="wz-title"><span lang="ja">機種は？</span><span lang="pt">Qual é o modelo?</span></h2>
-      <input type="hidden" id="model">
-      <div id="models"></div>
-      <div class="field hidden" id="other-model-wrap" style="margin-top:12px">
-        <input type="text" id="other-model" data-ph-ja="機種名を入力" data-ph-pt="Digite o modelo">
-        <button type="button" class="btn btn-primary" data-next="4" style="margin-top:10px"><span lang="ja">次へ</span><span lang="pt">Próximo</span> ›</button>
-      </div>
-      <div class="msg err hidden" id="model-msg"><span lang="ja">機種を選んでください</span><span lang="pt">Escolha o modelo</span></div>
+      <button type="button" class="btn btn-primary" data-next="4"><span lang="ja">次へ</span><span lang="pt">Próximo</span> ›</button>
     </section>
 
     <!-- 4. Dados e envio -->
